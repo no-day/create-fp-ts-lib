@@ -1,0 +1,6 @@
+node_modules/
+dist/
+docs/modules/*.ts.md
+docs/_site
+yarn-error.log
+Gemfile.lock
