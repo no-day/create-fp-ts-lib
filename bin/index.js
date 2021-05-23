@@ -1,3 +1,10 @@
 #!/usr/bin/env node
 
-console.log("create-fp-ts-lib")
+var app = require('../dist')
+
+try {
+  app.main()
+} catch (e) {
+  console.error('Unexpected error')
+  process.exit(1)
+}
