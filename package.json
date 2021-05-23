@@ -10,7 +10,10 @@
   "bin": {
     "create-fp-ts-lib": "bin/index.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/mustache": "^4.1.1",
+    "mustache": "^4.2.0"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "fast-check": "^2.13.0",

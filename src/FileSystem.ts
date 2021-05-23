@@ -6,11 +6,12 @@ import * as path from 'path'
 
 import { pipe } from 'fp-ts/lib/function'
 import { Config } from './Config'
+import { FileObj, print } from './FileObj'
 
 export type FileSystem = Record<string, string>
 
 export const writeOut = ({ config }: { config: Config }) => (
-  fileSystem: FileSystem
+  fileSystem: Record<string, FileObj>
 ): AppEffect<void> =>
   pipe(
     RTE.ask<Capabilities>(),
@@ -25,7 +26,7 @@ export const writeOut = ({ config }: { config: Config }) => (
             RTE.bind('filePath', () => RTE.of(path.join(config.name, k))),
             RTE.bind('dirPath', (s) => RTE.of(path.dirname(s.filePath))),
             RTE.bind('_1', (s) => cap.mkDir(s.dirPath, { recursive: true })),
-            RTE.bind('_2', (s) => cap.writeFile(s.filePath, v))
+            RTE.bind('_2', (s) => cap.writeFile(s.filePath, print(v)))
           )
         )
       )
