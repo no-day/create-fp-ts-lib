@@ -12,9 +12,17 @@ const assetsDir = path.join(rootDir, 'assets/skeleton')
 
 export default (config: Config) => (files: FileSystem): AppEffect<FileSystem> =>
   pipe(
-    RTE.ask<Capabilities>(),
-    RTE.chain((cap) =>
+    RTE.ask<{ cap: Capabilities }>(),
+    RTE.chain(({ cap }) =>
       sequenceS(RTE.ApplyPar)({
+        'package.json': pipe(
+          path.join(assetsDir, 'package.json'),
+          cap.readFile
+        ),
+        'src/index.ts': pipe(
+          path.join(assetsDir, 'src/index.ts'),
+          cap.readFile
+        ),
         'tsconfig.json': pipe(
           path.join(assetsDir, 'tsconfig.json'),
           cap.readFile
