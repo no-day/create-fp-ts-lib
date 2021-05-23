@@ -25,6 +25,6 @@ const run: AppEffect<void> = pipe(
 )
 
 export const main: Task<void> = pipe(
-  run({ cap: capabilities }),
+  run(capabilities),
   TE.getOrElse(() => T.fromIO(log('ERROR')))
 )

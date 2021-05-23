@@ -12,8 +12,8 @@ const assetsDir = path.join(rootDir, 'assets/skeleton')
 
 export default (config: Config) => (files: FileSystem): AppEffect<FileSystem> =>
   pipe(
-    RTE.ask<{ cap: Capabilities }>(),
-    RTE.chain(({ cap }) =>
+    RTE.ask<Capabilities>(),
+    RTE.chain((cap) =>
       sequenceS(RTE.ApplyPar)({
         'package.json': pipe(
           path.join(assetsDir, 'package.json'),

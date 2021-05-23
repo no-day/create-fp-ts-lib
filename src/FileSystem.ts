@@ -13,7 +13,8 @@ export const writeOut = ({ config }: { config: Config }) => (
   fileSystem: FileSystem
 ): AppEffect<void> =>
   pipe(
-    RTE.ask<{ cap: Capabilities }>(),
+    RTE.ask<Capabilities>(),
+    RTE.map((cap) => ({ cap })),
     RTE.bind('_1', ({ cap }) => cap.mkDir(config.name, { recursive: false })),
     RTE.bind('_2', ({ cap }) =>
       pipe(
