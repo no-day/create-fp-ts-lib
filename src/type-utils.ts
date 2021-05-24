@@ -1,5 +1,3 @@
-import { tags } from 'mustache'
-
 export type Tagged<T, D> = { tag: T; data: D }
 
 export type MapTagged<T> = { [key in keyof T]: Tagged<key, T[key]> }
