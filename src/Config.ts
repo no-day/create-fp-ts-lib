@@ -1,11 +1,10 @@
-import * as PromptsTypeMap from 'fp-ts/lib/Option'
+import * as O from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import { AppEffect } from './AppEffect'
 import { prompts } from './prompts'
-
-import Option = PromptsTypeMap.Option
 import { pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
+import Option = O.Option
 
 export type Config = {
   name: string
@@ -65,7 +64,7 @@ export const getConfig: AppEffect<Config> = pipe(
     ...answers,
     license: 'MIT',
     eslint: true,
-    testing: PromptsTypeMap.some({ fastCheck: true }),
+    testing: O.some({ fastCheck: true }),
     docs: true,
     ci: true,
     vscode: true,

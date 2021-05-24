@@ -4,24 +4,13 @@ import * as RTE from 'fp-ts/ReaderTaskEither'
 import { AppEffect } from './AppEffect'
 import prompts_, { PromptObject } from 'prompts'
 
-import Option = PromptsTypeMap.Option
 import { pipe } from 'fp-ts/lib/function'
 
-export type Config = {
-  name: string
-  homepage: string
-  version: string
-  license: string
-  prettier: boolean
-  eslint: boolean
-  testing: Option<{ fastCheck: boolean }>
-  docs: boolean
-  ci: boolean
-  vscode: boolean
-  markdownMagic: boolean
+type PromptsTypeMap = {
+  text: string
+  toggle: boolean
 }
 
-type PromptsTypeMap = { text: string; toggle: boolean }
 type GetMaybe<T, K> = K extends keyof T ? T[K] : unknown
 
 export const prompts = <Opts extends Omit<PromptObject<'value'>, 'name'>>(
