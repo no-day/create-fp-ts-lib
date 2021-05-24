@@ -1,5 +1,7 @@
 /** @since {{version}} */
 
+import { pipe } from 'fp-ts/function'
+
 // -----------------------------------------------------------------------------
 // greetings
 // -----------------------------------------------------------------------------
@@ -13,4 +15,4 @@
  *   import { greet } from '{{NAME}}'
  *   assert.deepStrictEqual(greet('World'), 'Hello, World!')
  */
-export const greet = (name: string) => `Hello, ${name}!`
+export const greet = (name: string) => pipe(`Hello`, (x) => `${x}, ${name}!`)

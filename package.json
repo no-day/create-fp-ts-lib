@@ -11,6 +11,7 @@
     "create-fp-ts-lib": "bin/index.js"
   },
   "dependencies": {
+    "@no-day/ts-prefix": "^0.3.0",
     "@types/mustache": "^4.1.1",
     "@types/prompts": "^2.0.12",
     "mustache": "^4.2.0",

@@ -7,9 +7,12 @@ import * as RTE from 'fp-ts/ReaderTaskEither'
 import { AppEffect } from './AppEffect'
 import { getConfig } from './Config'
 import featureSkeleton from './features/skeleton'
+import featurePrettier from './features/prettier'
 import * as FileSystem from './FileSystem'
 import { log } from 'fp-ts/lib/Console'
 import { capabilities } from './capabilities'
+import { tag } from './type-utils'
+import { PackageJson } from './FileObj'
 
 const run: AppEffect<void> = pipe(
   RTE.Do,
@@ -18,6 +21,7 @@ const run: AppEffect<void> = pipe(
     pipe(
       {},
       featureSkeleton(config),
+      RTE.chain(featurePrettier(config)),
       RTE.chain(FileSystem.writeOut({ config }))
     )
   )

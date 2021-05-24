@@ -2,9 +2,10 @@ import * as O from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import { AppEffect } from './AppEffect'
 import { prompts } from './prompts'
-import { pipe } from 'fp-ts/lib/function'
+import { constVoid, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import Option = O.Option
+import { merge } from '@no-day/ts-prefix'
 
 export type Config = {
   name: string
@@ -51,23 +52,29 @@ export const getConfig: AppEffect<Config> = pipe(
       inactive: 'no',
     })
   ),
-  RTE.bind('_1', () => RTE.fromIO(log(''))),
-  RTE.bind('_confirm', ({ name }) =>
-    prompts({
-      type: 'confirm',
-      message: `ready to setup project in folder \`${name}\`?`,
-      initial: true,
-    })
+  RTE.chainFirst(() => RTE.fromIO(log(''))),
+  RTE.chainFirst(({ name }) =>
+    pipe(
+      prompts({
+        type: 'confirm',
+        message: `ready to setup project in folder \`${name}\`?`,
+        initial: true,
+      }),
+      RTE.chain((confirmed) =>
+        confirmed ? RTE.of(constVoid()) : RTE.left('Aborted by user')
+      )
+    )
   ),
-  RTE.chain((x) => (x._confirm ? RTE.of(x) : RTE.left('Aborted by user'))),
-  RTE.map((answers) => ({
-    ...answers,
-    license: 'MIT',
-    eslint: true,
-    testing: O.some({ fastCheck: true }),
-    docs: true,
-    ci: true,
-    vscode: true,
-    markdownMagic: true,
-  }))
+
+  RTE.map(
+    merge({
+      license: 'MIT',
+      eslint: true,
+      testing: O.some({ fastCheck: true }),
+      docs: true,
+      ci: true,
+      vscode: true,
+      markdownMagic: true,
+    })
+  )
 )

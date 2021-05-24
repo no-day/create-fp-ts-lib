@@ -486,6 +486,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@no-day/ts-prefix@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@no-day/ts-prefix/-/ts-prefix-0.3.0.tgz#e3e335ff143bddbf0b3d794bc8fead842a25fb7b"
+  integrity sha512-BtnwpSAQIL9weopWpsPhjCTqd3oJcS/TjiIWORW88jIlwaUw8YqiWCzNbuZUcqYqgase93Qn5O+FhdU+WqvakA==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.2.tgz#858f5c4b48d80778fde4b9d541f27edc0d56488b"

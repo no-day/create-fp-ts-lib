@@ -9,6 +9,7 @@ import { pipe } from 'fp-ts/lib/function'
 type PromptsTypeMap = {
   text: string
   toggle: boolean
+  confirm: boolean
 }
 
 type GetMaybe<T, K> = K extends keyof T ? T[K] : unknown
