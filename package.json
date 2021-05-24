@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@types/mustache": "^4.1.1",
-    "mustache": "^4.2.0"
+    "@types/prompts": "^2.0.12",
+    "mustache": "^4.2.0",
+    "prompts": "^2.4.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
