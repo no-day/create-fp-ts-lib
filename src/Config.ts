@@ -21,37 +21,37 @@ export type Config = {
   markdownMagic: boolean
 }
 
+const getName = prompts({
+  type: 'text',
+  message: 'project name',
+})
+
+const getHomepage = prompts({
+  type: 'text',
+  message: 'homepage',
+  initial: 'http://',
+})
+
+const getVersion = prompts({
+  type: 'text',
+  message: 'version',
+  initial: '1.0.0',
+})
+
+const getPrettier = prompts({
+  type: 'toggle',
+  message: 'use prettier',
+  initial: true,
+  active: 'yes',
+  inactive: 'no',
+})
+
 export const getConfig: AppEffect<Config> = pipe(
   RTE.Do,
-  RTE.bind('name', () =>
-    prompts({
-      type: 'text',
-      message: 'project name',
-    })
-  ),
-  RTE.bind('homepage', () =>
-    prompts({
-      type: 'text',
-      message: 'homepage',
-      initial: 'http://',
-    })
-  ),
-  RTE.bind('version', () =>
-    prompts({
-      type: 'text',
-      message: 'version',
-      initial: '1.0.0',
-    })
-  ),
-  RTE.bind('prettier', () =>
-    prompts({
-      type: 'toggle',
-      message: 'use prettier',
-      initial: true,
-      active: 'yes',
-      inactive: 'no',
-    })
-  ),
+  RTE.bind('name', () => getName),
+  RTE.bind('homepage', () => getHomepage),
+  RTE.bind('version', () => getVersion),
+  RTE.bind('prettier', () => getPrettier),
   RTE.chainFirst(() => RTE.fromIO(log(''))),
   RTE.chainFirst(({ name }) =>
     pipe(
