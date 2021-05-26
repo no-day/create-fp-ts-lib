@@ -11,24 +11,24 @@ import featurePrettier from './features/prettier'
 import * as FileSystem from './FileSystem'
 import { log } from 'fp-ts/lib/Console'
 import { capabilities } from './capabilities'
-import { tag } from './type-utils'
-import { PackageJson } from './FileObj'
 
-const run: AppEffect<void> = pipe(
-  RTE.Do,
-  RTE.bind('config', () => getConfig),
-  RTE.chain(({ config }) =>
-    pipe(
-      {},
-      featureSkeleton(config),
-      RTE.chain(featurePrettier(config)),
-      RTE.chain(FileSystem.writeOut({ config }))
-    )
-  )
+const app: AppEffect<void> = pipe(
+  {},
+  featureSkeleton,
+  RTE.chain(featurePrettier),
+  RTE.chain(FileSystem.writeOut)
+)
+
+const cap = capabilities
+
+const setup: TE.TaskEither<string, void> = pipe(
+  TE.Do,
+  TE.bind('config', () => getConfig({ cap })),
+  TE.chain(({ config }) => app({ config, cap }))
 )
 
 export const main: Task<void> = pipe(
-  run(capabilities),
+  setup,
   TE.getOrElse((e) =>
     pipe(
       log(`ERROR: ${e}`),

@@ -1,8 +1,7 @@
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import { Config } from '../Config'
 import * as path from 'path'
 import * as Mustache from 'mustache'
-import { AppEffect, Capabilities } from '../AppEffect'
+import { AppEffect, AppEnv } from '../AppEffect'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
@@ -12,10 +11,10 @@ import { call, merge, ShallowMerge } from '@no-day/ts-prefix'
 const rootDir = path.join(__dirname, '../../')
 const assetsDir = path.join(rootDir, 'assets/skeleton')
 
-const devDependencies = (config: Config): PackageJson['devDependencies'] => ({
+const devDependencies: PackageJson['devDependencies'] = {
   typescript: '^4.2.3',
   'fp-ts': '^2.9.5',
-})
+}
 
 const scripts: PackageJson['scripts'] = {
   build: 'tsc -p tsconfig.build.json',
@@ -27,65 +26,68 @@ const peerDependencies = {
   'fp-ts': '^2.9.5',
 }
 
-const packageJson = (config: Config): AppEffect<FileObj_['PackageJson']> =>
-  pipe(
-    {
-      name: config.name,
-      homepage: config.homepage,
-      version: config.version,
-      main: 'dist/index.js',
-      license: config.license,
-      peerDependencies,
-      dependencies: {},
-      devDependencies: devDependencies(config),
-      scripts,
-    },
-    tag('PackageJson'),
-    RTE.of
-  )
-
-const gitIgnore = (config: Config): AppEffect<FileObj_['Text']> =>
-  pipe(['node_modules/', 'dist/', 'yarn-error.log'], tag('Text'), RTE.of)
-
-const indexTs = (config: Config): AppEffect<FileObj_['Text']> =>
-  pipe(
-    RTE.ask<Capabilities>(),
-    RTE.chain((cap) =>
-      pipe(
-        path.join(assetsDir, 'src/index.ts'),
-        cap.readFile,
-        RTE.map((x) => Mustache.render(x, config)),
-        RTE.map(splitLines),
-        RTE.map(tag('Text'))
-      )
+const packageJson: AppEffect<FileObj_['PackageJson']> = pipe(
+  RTE.ask<AppEnv>(),
+  RTE.map(({ config }) =>
+    pipe(
+      {
+        name: config.name,
+        homepage: config.homepage,
+        version: config.version,
+        main: 'dist/index.js',
+        license: config.license,
+        peerDependencies,
+        dependencies: {},
+        devDependencies: devDependencies,
+        scripts,
+      },
+      tag('PackageJson')
     )
   )
+)
 
-const tsConfig = (config: Config): AppEffect<FileObj_['Text']> =>
-  pipe(
-    RTE.ask<Capabilities>(),
-    RTE.chain((cap) =>
-      pipe(
-        path.join(assetsDir, 'tsconfig.json'),
-        cap.readFile,
-        RTE.map(splitLines),
-        RTE.map(tag('Text'))
-      )
+const gitIgnore: AppEffect<FileObj_['Text']> = pipe(
+  ['node_modules/', 'dist/', 'yarn-error.log'],
+  tag('Text'),
+  RTE.of
+)
+
+const indexTs: AppEffect<FileObj_['Text']> = pipe(
+  RTE.ask<AppEnv>(),
+  RTE.chain(({ cap, config }) =>
+    pipe(
+      path.join(assetsDir, 'src/index.ts'),
+      cap.readFile,
+      RTE.map((x) => Mustache.render(x, config)),
+      RTE.map(splitLines),
+      RTE.map(tag('Text'))
     )
   )
+)
 
-const tsConfigBuild = (config: Config): AppEffect<FileObj_['Text']> =>
-  pipe(
-    RTE.ask<Capabilities>(),
-    RTE.chain((cap) =>
-      pipe(
-        path.join(assetsDir, 'tsconfig.build.json'),
-        cap.readFile,
-        RTE.map(splitLines),
-        RTE.map(tag('Text'))
-      )
+const tsConfig: AppEffect<FileObj_['Text']> = pipe(
+  RTE.ask<AppEnv>(),
+  RTE.chain(({ cap }) =>
+    pipe(
+      path.join(assetsDir, 'tsconfig.json'),
+      cap.readFile,
+      RTE.map(splitLines),
+      RTE.map(tag('Text'))
     )
   )
+)
+
+const tsConfigBuild: AppEffect<FileObj_['Text']> = pipe(
+  RTE.ask<AppEnv>(),
+  RTE.chain(({ cap }) =>
+    pipe(
+      path.join(assetsDir, 'tsconfig.build.json'),
+      cap.readFile,
+      RTE.map(splitLines),
+      RTE.map(tag('Text'))
+    )
+  )
+)
 
 type In = Record<string, FileObj>
 
@@ -101,17 +103,17 @@ type Out = Extends<
   }
 >
 
-export default (config: Config) => <I extends In & Record<string, FileObj>>(
+export default <I extends In & Record<string, FileObj>>(
   files: I
 ): AppEffect<ShallowMerge<I, Out>> =>
   pipe(
     sequenceS(RTE.ApplyPar)({
-      'package.json': packageJson(config),
-      '.gitignore': gitIgnore(config),
-      'src/index.ts': indexTs(config),
-      'tsconfig.json': tsConfig(config),
-      'tsconfig.settings.json': tsConfig(config),
-      'tsconfig.build.json': tsConfigBuild(config),
+      'package.json': packageJson,
+      '.gitignore': gitIgnore,
+      'src/index.ts': indexTs,
+      'tsconfig.json': tsConfig,
+      'tsconfig.settings.json': tsConfig,
+      'tsconfig.build.json': tsConfigBuild,
     }),
     RTE.map(merge(files))
   )

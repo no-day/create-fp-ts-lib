@@ -1,11 +1,11 @@
 import * as O from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/ReaderTaskEither'
-import { AppEffect } from './AppEffect'
 import { prompts } from './prompts'
 import { constVoid, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import Option = O.Option
 import { merge } from '@no-day/ts-prefix'
+import { Capabilities } from './AppEffect'
 
 export type Config = {
   name: string
@@ -46,7 +46,11 @@ const getPrettier = prompts({
   inactive: 'no',
 })
 
-export const getConfig: AppEffect<Config> = pipe(
+export const getConfig: RTE.ReaderTaskEither<
+  { cap: Capabilities },
+  string,
+  Config
+> = pipe(
   RTE.Do,
   RTE.bind('name', () => getName),
   RTE.bind('homepage', () => getHomepage),

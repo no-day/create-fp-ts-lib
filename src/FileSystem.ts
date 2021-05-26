@@ -1,23 +1,20 @@
-import { AppEffect, Capabilities } from './AppEffect'
+import { AppEffect, AppEnv } from './AppEffect'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as TE from 'fp-ts/lib/TaskEither'
 import * as R from 'fp-ts/Record'
 import * as path from 'path'
-
 import { constVoid, pipe } from 'fp-ts/lib/function'
-import { Config } from './Config'
 import { FileObj, print } from './FileObj'
-
 export type FileSystem = Record<string, string>
 
-export const writeOut = ({ config }: { config: Config }) => (
+export const writeOut = (
   fileSystem: Record<string, FileObj>
 ): AppEffect<void> =>
   pipe(
-    RTE.ask<Capabilities>(),
-    RTE.map((cap) => ({ cap })),
-    RTE.chainFirst(({ cap }) => cap.mkDir(config.name, { recursive: false })),
-    RTE.chainFirst(({ cap }) =>
+    RTE.ask<AppEnv>(),
+    RTE.chainFirst(({ cap, config }) =>
+      cap.mkDir(config.name, { recursive: false })
+    ),
+    RTE.chainFirst(({ cap, config }) =>
       pipe(
         fileSystem,
         R.traverseWithIndex(RTE.ApplicativeSeq)((k, v) =>
