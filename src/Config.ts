@@ -46,6 +46,18 @@ const getPrettier = prompts({
   inactive: 'no',
 })
 
+const confirm = <O extends { name: string }>({ name }: O) =>
+  pipe(
+    prompts({
+      type: 'confirm',
+      message: `ready to setup project in folder \`${name}\`?`,
+      initial: true,
+    }),
+    RTE.chain((confirmed) =>
+      confirmed ? RTE.of(constVoid()) : RTE.left('Aborted by user')
+    )
+  )
+
 export const getConfig: RTE.ReaderTaskEither<
   { cap: Capabilities },
   string,
@@ -57,19 +69,7 @@ export const getConfig: RTE.ReaderTaskEither<
   RTE.bind('version', () => getVersion),
   RTE.bind('prettier', () => getPrettier),
   RTE.chainFirst(() => RTE.fromIO(log(''))),
-  RTE.chainFirst(({ name }) =>
-    pipe(
-      prompts({
-        type: 'confirm',
-        message: `ready to setup project in folder \`${name}\`?`,
-        initial: true,
-      }),
-      RTE.chain((confirmed) =>
-        confirmed ? RTE.of(constVoid()) : RTE.left('Aborted by user')
-      )
-    )
-  ),
-
+  RTE.chainFirst(confirm),
   RTE.map(
     merge({
       license: 'MIT',

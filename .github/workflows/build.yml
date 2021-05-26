@@ -37,7 +37,6 @@ jobs:
           yarn run build
           yarn test
           yarn lint
-          yarn docs
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.0.0
