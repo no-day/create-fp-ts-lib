@@ -1,4 +1,4 @@
-import { MapTagged, match, Tagged, Union } from './type-utils'
+import { MapTagged, match, Union } from './type-utils'
 
 export type Json =
   | string

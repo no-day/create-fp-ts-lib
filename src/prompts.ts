@@ -1,7 +1,6 @@
 import * as PromptsTypeMap from 'fp-ts/lib/Option'
 import * as T from 'fp-ts/lib/Task'
 import * as RTE from 'fp-ts/ReaderTaskEither'
-import { AppEffect } from './AppEffect'
 import prompts_, { PromptObject } from 'prompts'
 
 import { pipe } from 'fp-ts/lib/function'
