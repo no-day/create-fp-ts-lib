@@ -14,8 +14,10 @@
     "@no-day/ts-prefix": "^0.3.0",
     "@types/mustache": "^4.1.1",
     "@types/prompts": "^2.0.12",
+    "@types/yargs": "^17.0.0",
     "mustache": "^4.2.0",
-    "prompts": "^2.4.1"
+    "prompts": "^2.4.1",
+    "yargs": "^17.0.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
@@ -41,6 +43,7 @@
     "md:watch": "while inotifywait -e close_write README.md; do yarn md; done",
     "docs-preview:watch": "cd docs; bundle exec jekyll serve --livereload",
     "docs-preview": "cd docs; bundle exec jekyll serve",
-    "lint": "yarn eslint src tests --ext .js,.jsx,.ts,.tsx"
+    "lint": "yarn eslint src tests --ext .js,.jsx,.ts,.tsx",
+    "ci": "yarn build & yarn test & yarn lint"
   }
 }

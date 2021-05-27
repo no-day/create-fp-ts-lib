@@ -2,7 +2,7 @@ import * as PromptsTypeMap from 'fp-ts/lib/Option'
 import * as T from 'fp-ts/lib/Task'
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import prompts_, { PromptObject } from 'prompts'
-
+import { get } from '@no-day/ts-prefix'
 import { pipe } from 'fp-ts/lib/function'
 
 type PromptsTypeMap = {
@@ -18,6 +18,6 @@ export const prompts = <Opts extends Omit<PromptObject<'value'>, 'name'>>(
 ): RTE.ReaderTaskEither<any, string, GetMaybe<PromptsTypeMap, Opts['type']>> =>
   pipe(
     () => prompts_({ ...opts, name: 'value' }),
-    T.map((x) => x.value),
+    T.map(get('value')),
     (x) => RTE.fromTask(x)
   )

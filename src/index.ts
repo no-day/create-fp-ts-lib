@@ -11,6 +11,7 @@ import featurePrettier from './features/prettier'
 import * as FileSystem from './FileSystem'
 import { log } from 'fp-ts/lib/Console'
 import { capabilities } from './capabilities'
+import { getCliOpts } from './Cli'
 
 const app: AppEffect<void> = pipe(
   {},
@@ -23,6 +24,7 @@ const cap = capabilities
 
 const setup: TE.TaskEither<string, void> = pipe(
   TE.Do,
+  TE.bind('cliOpts', () => getCliOpts({ cap })),
   TE.bind('config', () => getConfig({ cap })),
   TE.chain(({ config }) => app({ config, cap }))
 )
