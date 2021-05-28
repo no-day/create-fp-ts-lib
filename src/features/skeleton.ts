@@ -1,12 +1,14 @@
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as TE from 'fp-ts/lib/TaskEither'
 import * as path from 'path'
 import * as Mustache from 'mustache'
-import { AppEffect, AppEnv } from '../AppEffect'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
 import { FileObj, FileObj_, PackageJson } from '../FileObj'
 import { call, merge, ShallowMerge } from '@no-day/ts-prefix'
+import { Capabilities } from '../Capabilities'
+import { Config } from '../Config'
 
 const rootDir = path.join(__dirname, '../../')
 const assetsDir = path.join(rootDir, 'assets/skeleton')
@@ -26,72 +28,54 @@ const peerDependencies = {
   'fp-ts': '^2.9.5',
 }
 
-const packageJson: AppEffect<FileObj_['PackageJson']> = pipe(
-  RTE.ask<AppEnv>(),
-  RTE.map(({ config }) =>
-    pipe(
-      {
-        name: config.name,
-        homepage: config.homepage,
-        version: config.version,
-        main: 'dist/index.js',
-        license: config.license,
-        peerDependencies,
-        dependencies: {},
-        devDependencies: devDependencies,
-        scripts,
-      },
-      tag('PackageJson')
-    )
+const packageJson: Effect<FileObj_['PackageJson']> = ({ config }) =>
+  pipe(
+    {
+      name: config.name,
+      homepage: config.homepage,
+      version: config.version,
+      main: 'dist/index.js',
+      license: config.license,
+      peerDependencies,
+      dependencies: {},
+      devDependencies: devDependencies,
+      scripts,
+    },
+    tag('PackageJson'),
+    TE.of
   )
-)
 
-const gitIgnore: AppEffect<FileObj_['Text']> = pipe(
-  ['node_modules/', 'dist/', 'yarn-error.log'],
-  tag('Text'),
-  RTE.of
-)
+const gitIgnore: Effect<FileObj_['Text']> = () =>
+  pipe(['node_modules/', 'dist/', 'yarn-error.log'], tag('Text'), TE.of)
 
-const indexTs: AppEffect<FileObj_['Text']> = pipe(
-  RTE.ask<AppEnv>(),
-  RTE.chain(({ cap, config }) =>
-    pipe(
-      path.join(assetsDir, 'src/index.ts'),
-      cap.readFile,
-      RTE.map((x) => Mustache.render(x, config)),
-      RTE.map(splitLines),
-      RTE.map(tag('Text'))
-    )
+const indexTs: Effect<FileObj_['Text']> = ({ cap, config }) =>
+  pipe(
+    path.join(assetsDir, 'src/index.ts'),
+    cap.readFile,
+    TE.map((x) => Mustache.render(x, config)),
+    TE.map(splitLines),
+    TE.map(tag('Text'))
   )
-)
 
-const tsConfig: AppEffect<FileObj_['Text']> = pipe(
-  RTE.ask<AppEnv>(),
-  RTE.chain(({ cap }) =>
-    pipe(
-      path.join(assetsDir, 'tsconfig.json'),
-      cap.readFile,
-      RTE.map(splitLines),
-      RTE.map(tag('Text'))
-    )
+const tsConfig: Effect<FileObj_['Text']> = ({ cap }) =>
+  pipe(
+    path.join(assetsDir, 'tsconfig.json'),
+    cap.readFile,
+    TE.map(splitLines),
+    TE.map(tag('Text'))
   )
-)
 
-const tsConfigBuild: AppEffect<FileObj_['Text']> = pipe(
-  RTE.ask<AppEnv>(),
-  RTE.chain(({ cap }) =>
-    pipe(
-      path.join(assetsDir, 'tsconfig.build.json'),
-      cap.readFile,
-      RTE.map(splitLines),
-      RTE.map(tag('Text'))
-    )
+const tsConfigBuild: Effect<FileObj_['Text']> = ({ cap }) =>
+  pipe(
+    path.join(assetsDir, 'tsconfig.build.json'),
+    cap.readFile,
+    TE.map(splitLines),
+    TE.map(tag('Text'))
   )
-)
 
-type In = Record<string, FileObj>
+type InFiles = Record<string, FileObj>
 
-type Out = Extends<
+type OutFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObj_['PackageJson']
@@ -103,19 +87,26 @@ type Out = Extends<
   }
 >
 
-export default <I extends In & Record<string, FileObj>>(
-  files: I
-): AppEffect<ShallowMerge<I, Out>> =>
+type Env = {
+  cap: Capabilities
+  config: Config
+  files: InFiles
+}
+
+type Effect<A> = (env: Env) => TE.TaskEither<string, A>
+
+const main: Effect<OutFiles> = (env) =>
   pipe(
-    sequenceS(RTE.ApplyPar)({
-      'package.json': packageJson,
-      '.gitignore': gitIgnore,
-      'src/index.ts': indexTs,
-      'tsconfig.json': tsConfig,
-      'tsconfig.settings.json': tsConfig,
-      'tsconfig.build.json': tsConfigBuild,
-    }),
-    RTE.map(merge(files))
+    sequenceS(TE.ApplyPar)({
+      'package.json': packageJson(env),
+      '.gitignore': gitIgnore(env),
+      'src/index.ts': indexTs(env),
+      'tsconfig.json': tsConfig(env),
+      'tsconfig.settings.json': tsConfig(env),
+      'tsconfig.build.json': tsConfigBuild(env),
+    })
   )
+
+export default main
 
 const splitLines = call('split', '\n')

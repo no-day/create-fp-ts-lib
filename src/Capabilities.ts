@@ -1,8 +1,18 @@
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import { TaskEither } from 'fp-ts/lib/TaskEither'
+import { Config } from './Config'
 import { flow } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
-import * as RTE from 'fp-ts/ReaderTaskEither'
-import { Capabilities } from './AppEffect'
 import * as fs from 'fs'
+
+export type Capabilities = {
+  mkDir: (
+    path: string,
+    opts: { recursive: boolean }
+  ) => TaskEither<string, void>
+  writeFile: (path: string, content: string) => TaskEither<string, void>
+  readFile: (path: string) => TaskEither<string, string>
+}
 
 const writeFile: (
   filename: string,
@@ -21,20 +31,17 @@ const mkdir: (
 export const capabilities: Capabilities = {
   mkDir: flow(
     mkdir,
-    RTE.fromTaskEither,
-    RTE.mapLeft(() => 'MKDIR ERROR')
+    TE.mapLeft(() => 'MKDIR ERROR')
   ),
 
   writeFile: flow(
     writeFile,
-    RTE.fromTaskEither,
-    RTE.mapLeft(() => 'WRITE FILE ERROR')
+    TE.mapLeft(() => 'WRITE FILE ERROR')
   ),
 
   readFile: flow(
     readFile,
-    RTE.fromTaskEither,
-    RTE.mapLeft(() => 'READ FILE ERROR'),
-    RTE.map((_) => _.toString())
+    TE.mapLeft(() => 'READ FILE ERROR'),
+    TE.map((_) => _.toString())
   ),
 }
