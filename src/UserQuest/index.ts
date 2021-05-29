@@ -1,10 +1,13 @@
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import * as TE from 'fp-ts/TaskEither'
+import * as O from 'fp-ts/Option'
 import { prompts } from '../prompts'
 import { constVoid, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
 import { CliOpts } from '../CliOpts'
+import TaskEither = TE.TaskEither
+import { descriptions } from '../descriptions'
 
 // -----------------------------------------------------------------------------
 // Effect
@@ -14,23 +17,37 @@ type Env = { cap: unknown; cliOpts: CliOpts }
 
 type Effect<A> = RTE.ReaderTaskEither<Env, string, A>
 
-const getName: Effect<string> = () =>
-  prompts({
-    type: 'text',
-    message: 'project name',
-  })
+const getName: Effect<string> = ({ cliOpts: { name } }) =>
+  pipe(
+    name,
+    O.match(
+      () =>
+        prompts({
+          type: 'text',
+          message: descriptions.name,
+        }),
+      TE.of
+    )
+  )
 
-const getHomepage: Effect<string> = () =>
-  prompts({
-    type: 'text',
-    message: 'homepage',
-    initial: 'http://',
-  })
+const getHomepage: Effect<string> = ({ cliOpts: { homepage } }) =>
+  pipe(
+    homepage,
+    O.match(
+      () =>
+        prompts({
+          type: 'text',
+          message: descriptions.homepage,
+          initial: 'http://',
+        }),
+      TE.of
+    )
+  )
 
 const getVersion: Effect<string> = () =>
   prompts({
     type: 'text',
-    message: 'version',
+    message: descriptions.version,
     initial: '1.0.0',
   })
 

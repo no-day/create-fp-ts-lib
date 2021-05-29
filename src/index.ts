@@ -15,7 +15,7 @@ import { merge } from '@no-day/ts-prefix'
 const setup: TE.TaskEither<string, void> = pipe(
   TE.Do,
   TE.bind('cap', () => TE.of(capabilities)),
-  TE.bind('cliOpts', ({ cap }) => getCliOpts({ cap })),
+  TE.bind('cliOpts', () => TE.fromTask(getCliOpts)),
   TE.bind('config', ({ cliOpts, cap }) => getQuest({ cap, cliOpts })),
   TE.chain(({ config, cap }) =>
     pipe(
