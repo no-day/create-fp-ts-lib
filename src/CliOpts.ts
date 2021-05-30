@@ -1,20 +1,14 @@
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-import { Option } from 'fp-ts/lib/Option'
-import * as O from 'fp-ts/lib/Option'
 import { UserQuest } from './UserQuest/type'
 import { pipe } from 'fp-ts/lib/function'
 import { Task } from 'fp-ts/lib/Task'
-import * as T from 'fp-ts/lib/Task'
-import * as R from 'fp-ts/lib/Record'
 import { descriptions } from './UserQuest/descriptions'
 import { defaults } from './UserQuest/defaults'
 
 // -----------------------------------------------------------------------------
 // util
 // -----------------------------------------------------------------------------
-
-type MapOrUndefined<T> = { [key in keyof T]?: T[key] }
 
 const excludePromise = <T>(args: T) => {
   type EliminatePromise<H> = H extends Promise<any> ? never : H
@@ -25,7 +19,7 @@ const excludePromise = <T>(args: T) => {
 // main
 // -----------------------------------------------------------------------------
 
-export type CliOpts = YArgsOpts
+type CliOpts = YArgsOpts
 
 type YArgsOpts = UserQuest & {
   noQuest: boolean
@@ -127,4 +121,10 @@ const getYArgs: Task<YArgsOpts> = () =>
       }).argv
   )
 
-export const getCliOpts = pipe(getYArgs)
+const getCliOpts = pipe(getYArgs)
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
+
+export { CliOpts, getCliOpts }

@@ -1,4 +1,4 @@
-/** @since {{version}} */
+/** @since {{projectVersion}} */
 
 import { pipe } from 'fp-ts/function'
 
@@ -9,7 +9,7 @@ import { pipe } from 'fp-ts/function'
 /**
  * It's a greeting
  *
- * @since {{version}}
+ * @since {{projectVersion}}
  * @category Greetings
  * @example
  *   import { greet } from '{{NAME}}'

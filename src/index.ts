@@ -21,10 +21,10 @@ const setup: TE.TaskEither<string, void> = pipe(
     pipe(
       TE.of({}),
       TE.chain((files) =>
-        pipe(featureSkeleton({ cap, config, files }), merge(files))
+        pipe(featureSkeleton({ cap, config, files }), TE.map(merge(files)))
       ),
       TE.chain((files) =>
-        pipe(featurePrettier({ cap, config, files }), merge(files))
+        pipe(featurePrettier({ cap, config, files }), TE.map(merge(files)))
       ),
       TE.chain((files) => FileSystem.writeOut({ files, cap, config }))
     )

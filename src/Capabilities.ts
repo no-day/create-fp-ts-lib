@@ -1,55 +1,75 @@
-import { TaskEither } from 'fp-ts/lib/TaskEither'
-import { flow } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 import * as fs from 'fs'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import { pipe } from 'fp-ts/lib/function'
 
-export type Capabilities = {
-  mkDir: (
-    path: string,
-    opts: { recursive: boolean }
-  ) => ReaderTaskEither<Record<string, unknown>, string, void>
-  writeFile: (
-    path: string,
-    content: string
-  ) => ReaderTaskEither<Record<string, unknown>, string, void>
-  readFile: (
-    path: string
-  ) => ReaderTaskEither<Record<string, unknown>, string, string>
+// -----------------------------------------------------------------------------
+// types
+// -----------------------------------------------------------------------------
+
+type Error = string
+
+type Effect<A> = ReaderTaskEither<Record<string, unknown>, Error, A>
+
+type Capabilities = {
+  mkDir: (path: string, opts: { recursive: boolean }) => Effect<void>
+  writeFile: (path: string, content: string) => Effect<void>
+  readFile: (path: string) => Effect<string>
 }
 
-const writeFile: (
+// -----------------------------------------------------------------------------
+// impl
+// -----------------------------------------------------------------------------
+
+const implWriteFile: (
   filename: string,
   data: string
 ) => TE.TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.writeFile)
 
-const readFile: (
+const implReadFile: (
   filename: string
 ) => TE.TaskEither<NodeJS.ErrnoException, Buffer> = TE.taskify(fs.readFile)
 
-const mkdir: (
+const implMkdir: (
   filename: string,
   opts: { recursive: boolean }
 ) => TE.TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.mkdir)
 
-export const capabilities: Capabilities = {
-  mkDir: flow(
-    mkdir,
-    RTE.fromTaskEither,
-    RTE.mapLeft(() => 'MKDIR ERROR')
-  ),
+// -----------------------------------------------------------------------------
+// capabilities
+// -----------------------------------------------------------------------------
 
-  writeFile: flow(
-    writeFile,
+const mkDir: Capabilities['mkDir'] = (name, opts) =>
+  pipe(
+    implMkdir(name, opts),
     RTE.fromTaskEither,
-    RTE.mapLeft(() => 'WRITE FILE ERROR')
-  ),
+    RTE.mapLeft(() => `Cannot create dictionary ${name}`)
+  )
 
-  readFile: flow(
-    readFile,
+const writeFile: Capabilities['writeFile'] = (name, opts) =>
+  pipe(
+    implWriteFile(name, opts),
     RTE.fromTaskEither,
-    RTE.mapLeft(() => 'READ FILE ERROR'),
+    RTE.mapLeft(() => `Cannot write to file ${name}`)
+  )
+
+const readFile: Capabilities['readFile'] = (name) =>
+  pipe(
+    implReadFile(name),
+    RTE.fromTaskEither,
+    RTE.mapLeft(() => 'Cannot read file `name`'),
     RTE.map((_) => _.toString())
-  ),
+  )
+
+const capabilities: Capabilities = {
+  mkDir,
+  writeFile,
+  readFile,
 }
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
+
+export { capabilities, Capabilities }

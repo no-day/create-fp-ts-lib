@@ -5,11 +5,12 @@ import * as Mustache from 'mustache'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
-import { FileObj, FileObj_, PackageJson } from '../FileObj'
+import { FileObj, FileObj_ } from '../FileObj'
 import { call } from '@no-day/ts-prefix'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config'
 import { scope } from '../ReaderTaskEither'
+import { PackageJson } from '../PackageJson'
 
 // -----------------------------------------------------------------------------
 // types
@@ -63,7 +64,7 @@ const devDependencies: Effect<PackageJson['devDependencies']> = RTE.scope(() =>
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(() =>
   RTE.of({
     build: 'tsc -p tsconfig.build.json',
-    'build:watch': 'tsc ',
+    'build:watch': 'tsc -w -p tsconfig.build.json',
     prepublish: 'yarn build',
   })
 )
@@ -125,6 +126,15 @@ const tsConfigBuild: Effect<FileObj_['Text']> = scope(({ cap }) =>
   )
 )
 
+const tsConfigSettings: Effect<FileObj_['Text']> = scope(({ cap }) =>
+  pipe(
+    path.join(assetsDir, 'tsconfig.settings.json'),
+    cap.readFile,
+    RTE.map(splitLines),
+    RTE.map(tag('Text'))
+  )
+)
+
 const main: Effect<OutFiles> = RTE.scope(() =>
   pipe(
     {
@@ -132,11 +142,15 @@ const main: Effect<OutFiles> = RTE.scope(() =>
       '.gitignore': gitIgnore,
       'src/index.ts': indexTs,
       'tsconfig.json': tsConfig,
-      'tsconfig.settings.json': tsConfig,
+      'tsconfig.settings.json': tsConfigSettings,
       'tsconfig.build.json': tsConfigBuild,
     },
     sequenceS(RTE.ApplyPar)
   )
 )
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
 
 export default main

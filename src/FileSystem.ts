@@ -6,17 +6,24 @@ import { constVoid, pipe } from 'fp-ts/lib/function'
 import { FileObj, print } from './FileObj'
 import { Config } from './Config'
 import { Capabilities } from './Capabilities'
-export type FileSystem = Record<string, string>
 
-export { writeOut }
+// -----------------------------------------------------------------------------
+// types
+// -----------------------------------------------------------------------------
+
+type FileSystem = Record<string, FileObj>
 
 type Env = {
   cap: Capabilities
   config: Config
-  files: Record<string, FileObj>
+  files: FileSystem
 }
 
 type Effect<A> = (env: Env) => TE.TaskEither<string, A>
+
+// -----------------------------------------------------------------------------
+// effect
+// -----------------------------------------------------------------------------
 
 const writeFile: (_1: string, _2: FileObj) => Effect<void> = (
   filePath,
@@ -25,20 +32,35 @@ const writeFile: (_1: string, _2: FileObj) => Effect<void> = (
   RTE.scope(({ cap, config }) =>
     pipe(
       RTE.Do,
-      RTE.bind('filePath', () => RTE.of(path.join(config.name, filePath))),
-      RTE.bind('dirPath', (s) => RTE.of(path.dirname(s.filePath))),
+      RTE.bind('filePath', () =>
+        pipe(path.join(config.name, filePath), RTE.of)
+      ),
+      RTE.bind('dirPath', (s) => pipe(path.dirname(s.filePath), RTE.of)),
       RTE.chainFirst((s) => cap.mkDir(s.dirPath, { recursive: true })),
       RTE.chainFirst((s) => cap.writeFile(s.filePath, print(content))),
       RTE.map(constVoid)
     )
   )
 
-const writeOut: Effect<void> = RTE.scope(({ files, cap, config }) =>
+const mkDir: Effect<void> = RTE.scope(({ config, cap }) =>
+  cap.mkDir(config.name, { recursive: false })
+)
+
+const writeFiles: Effect<void> = RTE.scope(({ files }) =>
   pipe(
-    cap.mkDir(config.name, { recursive: false }),
-    RTE.chainFirst(() =>
-      pipe(files, R.traverseWithIndex(RTE.ApplicativeSeq)(writeFile))
-    ),
+    files,
+    R.traverseWithIndex(RTE.ApplicativeSeq)(writeFile),
     RTE.map(constVoid)
   )
 )
+
+const writeOut: Effect<void> = pipe(
+  mkDir,
+  RTE.chainFirst(() => writeFiles)
+)
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
+
+export { FileSystem, writeOut }

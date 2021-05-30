@@ -34,6 +34,7 @@
     "typescript": "^4.2.3"
   },
   "scripts": {
+    "e2e-test": "e2e-tests/all.sh",
     "test": "yarn jest",
     "test:watch": "yarn jest --watch",
     "build": "yarn tsc",
@@ -44,6 +45,6 @@
     "docs-preview:watch": "cd docs; bundle exec jekyll serve --livereload",
     "docs-preview": "cd docs; bundle exec jekyll serve",
     "lint": "yarn eslint src tests --ext .js,.jsx,.ts,.tsx",
-    "ci": "yarn build & yarn test & yarn lint"
+    "ci": "yarn build & yarn test & yarn lint & yarn e2e-test"
   }
 }

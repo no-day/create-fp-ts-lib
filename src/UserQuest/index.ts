@@ -1,5 +1,4 @@
 import * as RTE from '../ReaderTaskEither'
-import * as O from 'fp-ts/Option'
 import { prompts as prompts_ } from '../prompts'
 import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
@@ -94,5 +93,9 @@ const getQuest: Effect<UserQuest> = pipe(
 const main: Effect<UserQuest> = RTE.scope(({ cliOpts: { noQuest } }) =>
   noQuest ? RTE.of(defaults) : getQuest
 )
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
 
 export default main

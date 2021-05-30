@@ -8,6 +8,8 @@ import { Capabilities } from '../Capabilities'
 import { Config } from '../Config'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
+import { prettierConfig } from '../prettier-config'
+import { Json } from '../Json'
 
 // -----------------------------------------------------------------------------
 // types
@@ -44,22 +46,26 @@ const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(({ files }) =>
   pipe(
     files['package.json'],
     modify('data', (data) =>
-      pipe(data, modify('dependencies', R.upsertAt('prettier', '^2.2.1')))
+      pipe(
+        data,
+        modify('dependencies', R.upsertAt('prettier', '^2.2.1')),
+        modify('scripts', R.upsertAt('pretty', 'yarn prettier --check .'))
+      )
     ),
     RTE.of
   )
 )
 
-const prettierRc: Effect<FileObj_['Json']> = RTE.scope(() =>
-  pipe(
-    {
-      singleQuote: true,
-      printWidth: 80,
-      semi: false,
-    },
-    tag('Json'),
-    RTE.of
-  )
+const prettierRc: Effect<FileObj_['Json']> = pipe(
+  prettierConfig as Json,
+  tag('Json'),
+  RTE.of
+)
+
+const prettierIgnore: Effect<FileObj_['Text']> = pipe(
+  ['/dist'],
+  tag('Text'),
+  RTE.of
 )
 
 const main: Effect<OutFiles> = RTE.scope(() =>
@@ -67,9 +73,14 @@ const main: Effect<OutFiles> = RTE.scope(() =>
     {
       'package.json': packageJson,
       '.prettierrc': prettierRc,
+      '.prettierignore': prettierIgnore,
     },
-    sequenceS(RTE.ApplyPar)
+    sequenceS(RTE.ApplySeq)
   )
 )
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
 
 export default main

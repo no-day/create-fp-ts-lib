@@ -1,37 +1,42 @@
 import { MapTagged, match, Union } from './type-utils'
+import * as J from './Json'
+import { Json } from './Json'
+import { PackageJson } from './PackageJson'
+import { prettierConfig } from './prettier-config'
+import { flow } from 'fp-ts/lib/function'
+import * as P from 'prettier'
 
-export type Json =
-  | string
-  | number
-  | boolean
-  | Array<Json>
-  | { [key: string]: Json }
-
-export type PackageJson = {
-  name: string
-  homepage: string
-  version: string
-  main: string
-  license: string
-  peerDependencies: Record<string, string>
-  dependencies: Record<string, string>
-  devDependencies: Record<string, string>
-  scripts: Record<string, string>
-}
+// -----------------------------------------------------------------------------
+// type
+// -----------------------------------------------------------------------------
 
 export type Text = string[]
 
 export type FileObj_ = MapTagged<{
   PackageJson: PackageJson
   Text: Text
-  Json: Json
+  Json: J.Json
 }>
 
 export type FileObj = Union<FileObj_>
 
+// -----------------------------------------------------------------------------
+// util
+// -----------------------------------------------------------------------------
+
+const printJson: (text: Json) => string = flow(J.print, (str) =>
+  P.format(str, { ...prettierConfig, parser: 'json' })
+)
+
+const printText: (text: Text) => string = (lines) => lines.join('\n')
+
+// -----------------------------------------------------------------------------
+// fns
+// -----------------------------------------------------------------------------
+
 export const print = (x: FileObj): string =>
   match(x, {
-    Text: (d) => d.data.join('\n'),
-    Json: (d) => JSON.stringify(d.data, null, 2),
-    PackageJson: (d) => JSON.stringify(d.data, null, 2),
+    Text: (d) => printText(d.data),
+    Json: (d) => printJson(d.data),
+    PackageJson: (d) => printJson(d.data),
   })
