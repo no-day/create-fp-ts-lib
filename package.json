@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@no-day/ts-prefix": "^0.3.0",
+    "@types/eslint": "^7.2.12",
     "@types/mustache": "^4.1.1",
     "@types/prompts": "^2.0.12",
     "@types/yargs": "^17.0.0",

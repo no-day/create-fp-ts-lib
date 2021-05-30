@@ -2,6 +2,7 @@ import { pipe } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 import featureSkeleton from './features/skeleton'
 import featurePrettier from './features/prettier'
+import featureEsLint from './features/eslint'
 import { FileSystem } from './FileSystem'
 import * as FS from './FileSystem'
 import { Capabilities, capabilities } from './Capabilities'
@@ -38,7 +39,14 @@ const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
       pipe(featureSkeleton({ cap, config, files }), TE.map(merge(files)))
     ),
     TE.chain((files) =>
-      pipe(featurePrettier({ cap, config, files }), TE.map(merge(files)))
+      config.prettier
+        ? pipe(featurePrettier({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
+    ),
+    TE.chain((files) =>
+      config.eslint
+        ? pipe(featureEsLint({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
     )
   )
 

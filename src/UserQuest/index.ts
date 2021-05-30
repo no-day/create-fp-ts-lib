@@ -41,6 +41,13 @@ const getProjectVersion: Effect<string> = RTE.scope(
       initial: projectVersion,
     })
 )
+const getLicense: Effect<string> = RTE.scope(({ config: { license } }) =>
+  prompts({
+    type: 'text',
+    message: descriptions.license,
+    initial: license,
+  })
+)
 
 const getPrettier: Effect<boolean> = RTE.scope(({ config: { prettier } }) =>
   prompts({
@@ -52,11 +59,13 @@ const getPrettier: Effect<boolean> = RTE.scope(({ config: { prettier } }) =>
   })
 )
 
-const getLicense: Effect<string> = RTE.scope(({ config: { license } }) =>
+const getEsLint: Effect<boolean> = RTE.scope(({ config: { eslint } }) =>
   prompts({
-    type: 'text',
-    message: descriptions.license,
-    initial: license,
+    type: 'toggle',
+    message: descriptions.eslint,
+    initial: eslint,
+    active: 'yes',
+    inactive: 'no',
   })
 )
 
@@ -77,9 +86,9 @@ const getQuest: Effect<UserQuest> = pipe(
   RTE.bind('name', () => getName),
   RTE.bind('homepage', () => getHomepage),
   RTE.bind('projectVersion', () => getProjectVersion),
-  RTE.bind('prettier', () => getPrettier),
   RTE.bind('license', () => getLicense),
-  RTE.bind('eslint', () => RTE.of(true)),
+  RTE.bind('prettier', () => getPrettier),
+  RTE.bind('eslint', () => getEsLint),
   RTE.bind('jest', () => RTE.of(true)),
   RTE.bind('fastCheck', () => RTE.of(true)),
   RTE.bind('docsTs', () => RTE.of(true)),

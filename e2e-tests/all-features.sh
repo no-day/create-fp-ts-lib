@@ -13,3 +13,4 @@ cd fp-ts-lib
 
 yarn install
 yarn build
+yarn lint

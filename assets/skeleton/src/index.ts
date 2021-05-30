@@ -15,4 +15,5 @@ import { pipe } from 'fp-ts/function'
  *   import { greet } from '{{NAME}}'
  *   assert.deepStrictEqual(greet('World'), 'Hello, World!')
  */
-export const greet = (name: string) => pipe(`Hello`, (x) => `${x}, ${name}!`)
+export const greet = (name: string): string =>
+  pipe(`Hello`, (x) => `${x}, ${name}!`)

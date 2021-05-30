@@ -1,5 +1,5 @@
 import * as RTE from '../ReaderTaskEither'
-import { pipe } from 'fp-ts/lib/function'
+import { flow, pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
 import { FileObj, FileObj_ } from '../FileObj'
 import { modify } from '@no-day/ts-prefix'
@@ -10,6 +10,9 @@ import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { prettierConfig } from '../prettier-config'
 import { Json } from '../Json'
+import { Linter } from 'eslint'
+
+//const y= new E.ESLint({})
 
 // -----------------------------------------------------------------------------
 // types
@@ -34,11 +37,25 @@ type OutFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObj_['PackageJson']
-    '.prettierrc': FileObj_['Json']
-    '.prettierignore': FileObj_['Text']
+    '.eslintrc': FileObj_['Json']
+    '.eslintignore': FileObj_['Text']
   }
 >
 
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+
+const eslintConfig: Linter.Config = {
+  root: true,
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  rules: {
+    'id-length': ['error', { min: 1, max: 20 }],
+    '@typescript-eslint/no-explicit-any': 'off',
+  },
+}
 // -----------------------------------------------------------------------------
 // Effect
 // -----------------------------------------------------------------------------
@@ -49,23 +66,36 @@ const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(({ files }) =>
     modify('data', (data) =>
       pipe(
         data,
-        modify('dependencies', R.upsertAt('prettier', '^2.2.1')),
-        modify('scripts', R.upsertAt('pretty', 'yarn prettier --check .'))
+        modify(
+          'dependencies',
+          flow(
+            R.upsertAt('eslint', '^7.27.0'),
+            R.upsertAt('@typescript-eslint/eslint-plugin', '^4.25.0'),
+            R.upsertAt('@typescript-eslint/parser', '^4.25.0')
+          )
+        ),
+        modify(
+          'scripts',
+          R.upsertAt(
+            'lint',
+            'yarn eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0'
+          )
+        )
       )
     ),
     RTE.of
   )
 )
 
-const prettierRc: Effect<FileObj_['Json']> = pipe(
-  prettierConfig as Json,
-  tag('Json'),
+const eslintIgnore: Effect<FileObj_['Text']> = pipe(
+  ['node_modules', 'dist', 'coverage'],
+  tag('Text'),
   RTE.of
 )
 
-const prettierIgnore: Effect<FileObj_['Text']> = pipe(
-  ['/dist'],
-  tag('Text'),
+const eslintRc: Effect<FileObj_['Json']> = pipe(
+  eslintConfig as Json,
+  tag('Json'),
   RTE.of
 )
 
@@ -73,8 +103,8 @@ const main: Effect<OutFiles> = RTE.scope(() =>
   pipe(
     {
       'package.json': packageJson,
-      '.prettierrc': prettierRc,
-      '.prettierignore': prettierIgnore,
+      '.eslintrc': eslintRc,
+      '.eslintignore': eslintIgnore,
     },
     sequenceS(RTE.ApplySeq)
   )
