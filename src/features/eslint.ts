@@ -8,11 +8,8 @@ import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
-import { prettierConfig } from '../prettier-config'
 import { Json } from '../Json'
 import { Linter } from 'eslint'
-
-//const y= new E.ESLint({})
 
 // -----------------------------------------------------------------------------
 // types
