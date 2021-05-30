@@ -20,13 +20,13 @@ const prompts = flow(prompts_, RTE.fromTaskEither)
 const getName: Effect<string> = RTE.scope(({ cliOpts: { name } }) =>
   pipe(
     name,
+    O.fromNullable,
     O.match(
       () =>
         prompts({
           type: 'text',
           message: descriptions.name,
         }),
-
       RTE.of
     )
   )
@@ -35,6 +35,7 @@ const getName: Effect<string> = RTE.scope(({ cliOpts: { name } }) =>
 const getHomepage: Effect<string> = RTE.scope(({ cliOpts: { homepage } }) =>
   pipe(
     homepage,
+    O.fromNullable,
     O.match(
       () =>
         prompts({
@@ -47,24 +48,27 @@ const getHomepage: Effect<string> = RTE.scope(({ cliOpts: { homepage } }) =>
   )
 )
 
-const getVersion: Effect<string> = RTE.scope(({ cliOpts: { version } }) =>
-  pipe(
-    version,
-    O.match(
-      () =>
-        prompts({
-          type: 'text',
-          message: descriptions.version,
-          initial: '1.0.0',
-        }),
-      RTE.of
+const getProjectVersion: Effect<string> = RTE.scope(
+  ({ cliOpts: { projectVersion: version } }) =>
+    pipe(
+      version,
+      O.fromNullable,
+      O.match(
+        () =>
+          prompts({
+            type: 'text',
+            message: descriptions.projectVersion,
+            initial: '1.0.0',
+          }),
+        RTE.of
+      )
     )
-  )
 )
 
 const getPrettier: Effect<boolean> = RTE.scope(({ cliOpts: { prettier } }) =>
   pipe(
     prettier,
+    O.fromNullable,
     O.match(
       () =>
         prompts({
@@ -96,7 +100,7 @@ export const getQuest: Effect<UserQuest> = RTE.scope(() =>
     RTE.Do,
     RTE.bind('name', () => getName),
     RTE.bind('homepage', () => getHomepage),
-    RTE.bind('version', () => getVersion),
+    RTE.bind('projectVersion', () => getProjectVersion),
     RTE.bind('prettier', () => getPrettier),
     RTE.bind('license', () => RTE.of('MIT')),
     RTE.bind('eslint', () => RTE.of(true)),

@@ -1,7 +1,7 @@
 export type UserQuest = {
   name: string
   homepage: string
-  version: string
+  projectVersion: string
   license: string
   prettier: boolean
   eslint: boolean

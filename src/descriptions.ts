@@ -3,7 +3,7 @@ import { UserQuest } from './UserQuest/type'
 export const descriptions: { [key in keyof UserQuest]: string } = {
   name: 'project name',
   homepage: 'project homepage URL',
-  version: 'project version',
+  projectVersion: 'project version',
   license: 'project license',
   prettier: 'use prettier',
   eslint: 'use eslint',

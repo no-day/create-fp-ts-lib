@@ -80,7 +80,7 @@ const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(({ config }) =>
     {
       name: RTE.of(config.name),
       homepage: RTE.of(config.homepage),
-      version: RTE.of(config.version),
+      version: RTE.of(config.projectVersion),
       main: RTE.of('dist/index.js'),
       license: RTE.of(config.license),
       peerDependencies: peerDependencies,

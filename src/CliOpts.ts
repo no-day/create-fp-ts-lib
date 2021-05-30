@@ -13,28 +13,18 @@ import { descriptions } from './descriptions'
 // util
 // -----------------------------------------------------------------------------
 
-type MapOption<T> = { [key in keyof T]: Option<T[key]> }
-
-type MapOrUndefined<T> = { [key in keyof T]: T[key] | undefined }
+type MapOrUndefined<T> = { [key in keyof T]?: T[key] }
 
 const excludePromise = <T>(args: T) => {
   type EliminatePromise<H> = H extends Promise<any> ? never : H
-  console.log(args)
   return Promise.resolve(args as EliminatePromise<typeof args>)
 }
-
-const mapOption = <R extends Record<string, unknown>>(
-  r: { [key in keyof R]: R[key] | undefined }
-): { [key in keyof R]: Option<R[key]> } =>
-  pipe(r as Record<string, unknown>, R.map(O.fromNullable)) as {
-    [key in keyof R]: Option<R[key]>
-  }
 
 // -----------------------------------------------------------------------------
 // main
 // -----------------------------------------------------------------------------
 
-export type CliOpts = MapOption<UserQuest>
+export type CliOpts = MapOrUndefined<UserQuest>
 
 type YArgsOpts = MapOrUndefined<UserQuest>
 
@@ -51,10 +41,10 @@ const getYArgs: Task<YArgsOpts> = () =>
         type: 'string',
         description: descriptions.homepage,
       })
-      .option('version', {
+      .option('projectVersion', {
         alias: 'v',
         type: 'string',
-        description: descriptions.version,
+        description: descriptions.projectVersion,
       })
       .option('license', {
         type: 'string',
@@ -94,4 +84,4 @@ const getYArgs: Task<YArgsOpts> = () =>
       }).argv
   )
 
-export const getCliOpts = pipe(getYArgs, T.map(mapOption))
+export const getCliOpts = pipe(getYArgs)
