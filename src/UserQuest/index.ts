@@ -5,7 +5,8 @@ import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
 import { CliOpts } from '../CliOpts'
-import { descriptions } from '../descriptions'
+import { descriptions } from './descriptions'
+import { defaults } from './defaults'
 
 // -----------------------------------------------------------------------------
 // Effect
@@ -18,69 +19,38 @@ type Effect<A> = RTE.ReaderTaskEither<Env, string, A>
 const prompts = flow(prompts_, RTE.fromTaskEither)
 
 const getName: Effect<string> = RTE.scope(({ cliOpts: { name } }) =>
-  pipe(
-    name,
-    O.fromNullable,
-    O.match(
-      () =>
-        prompts({
-          type: 'text',
-          message: descriptions.name,
-        }),
-      RTE.of
-    )
-  )
+  prompts({
+    type: 'text',
+    initial: name,
+    message: descriptions.name,
+  })
 )
 
 const getHomepage: Effect<string> = RTE.scope(({ cliOpts: { homepage } }) =>
-  pipe(
-    homepage,
-    O.fromNullable,
-    O.match(
-      () =>
-        prompts({
-          type: 'text',
-          message: descriptions.homepage,
-          initial: 'http://',
-        }),
-      RTE.of
-    )
-  )
+  prompts({
+    type: 'text',
+    message: descriptions.homepage,
+    initial: homepage,
+  })
 )
 
 const getProjectVersion: Effect<string> = RTE.scope(
-  ({ cliOpts: { projectVersion: version } }) =>
-    pipe(
-      version,
-      O.fromNullable,
-      O.match(
-        () =>
-          prompts({
-            type: 'text',
-            message: descriptions.projectVersion,
-            initial: '1.0.0',
-          }),
-        RTE.of
-      )
-    )
+  ({ cliOpts: { projectVersion } }) =>
+    prompts({
+      type: 'text',
+      message: descriptions.projectVersion,
+      initial: projectVersion,
+    })
 )
 
 const getPrettier: Effect<boolean> = RTE.scope(({ cliOpts: { prettier } }) =>
-  pipe(
-    prettier,
-    O.fromNullable,
-    O.match(
-      () =>
-        prompts({
-          type: 'toggle',
-          message: 'use prettier',
-          initial: true,
-          active: 'yes',
-          inactive: 'no',
-        }),
-      RTE.of
-    )
-  )
+  prompts({
+    type: 'toggle',
+    message: 'use prettier',
+    initial: prettier,
+    active: 'yes',
+    inactive: 'no',
+  })
 )
 
 const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
@@ -95,22 +65,24 @@ const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
     )
   )
 
-export const getQuest: Effect<UserQuest> = RTE.scope(() =>
-  pipe(
-    RTE.Do,
-    RTE.bind('name', () => getName),
-    RTE.bind('homepage', () => getHomepage),
-    RTE.bind('projectVersion', () => getProjectVersion),
-    RTE.bind('prettier', () => getPrettier),
-    RTE.bind('license', () => RTE.of('MIT')),
-    RTE.bind('eslint', () => RTE.of(true)),
-    RTE.bind('jest', () => RTE.of(true)),
-    RTE.bind('fastCheck', () => RTE.of(true)),
-    RTE.bind('docsTs', () => RTE.of(true)),
-    RTE.bind('ghActions', () => RTE.of(true)),
-    RTE.bind('vscode', () => RTE.of(true)),
-    RTE.bind('markdownMagic', () => RTE.of(true)),
-    RTE.chainFirst(() => RTE.fromIO(log(''))),
-    RTE.chainFirst(({ name }) => confirm({ name }))
-  )
+const getAnswers: Effect<UserQuest> = pipe(
+  RTE.Do,
+  RTE.bind('name', () => getName),
+  RTE.bind('homepage', () => getHomepage),
+  RTE.bind('projectVersion', () => getProjectVersion),
+  RTE.bind('prettier', () => getPrettier),
+  RTE.bind('license', () => RTE.of('MIT')),
+  RTE.bind('eslint', () => RTE.of(true)),
+  RTE.bind('jest', () => RTE.of(true)),
+  RTE.bind('fastCheck', () => RTE.of(true)),
+  RTE.bind('docsTs', () => RTE.of(true)),
+  RTE.bind('ghActions', () => RTE.of(true)),
+  RTE.bind('vscode', () => RTE.of(true)),
+  RTE.bind('markdownMagic', () => RTE.of(true)),
+  RTE.chainFirst(() => RTE.fromIO(log(''))),
+  RTE.chainFirst(({ name }) => confirm({ name }))
+)
+
+export const getQuest: Effect<UserQuest> = RTE.scope(
+  ({ cliOpts: { noQuest } }) => (noQuest ? RTE.of(defaults) : getAnswers)
 )

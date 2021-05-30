@@ -1,12 +1,12 @@
-DIR=$($PWD)
+DIR=$PWD
 TMP=$(mktemp -d)
 
 cd $TMP
 
-./$DIR/bin/index.js \
+$DIR/bin/index.js \
     --name name \
     --homepage homepage \
-    --version version \
+    --projectVersion projectVersion \
     --license license \
     --prettier \
     --eslint \

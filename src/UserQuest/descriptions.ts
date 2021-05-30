@@ -1,4 +1,4 @@
-import { UserQuest } from './UserQuest/type'
+import { UserQuest } from './type'
 
 export const descriptions: { [key in keyof UserQuest]: string } = {
   name: 'Project name',

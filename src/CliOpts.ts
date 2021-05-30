@@ -7,7 +7,8 @@ import { pipe } from 'fp-ts/lib/function'
 import { Task } from 'fp-ts/lib/Task'
 import * as T from 'fp-ts/lib/Task'
 import * as R from 'fp-ts/lib/Record'
-import { descriptions } from './descriptions'
+import { descriptions } from './UserQuest/descriptions'
+import { defaults } from './UserQuest/defaults'
 
 // -----------------------------------------------------------------------------
 // util
@@ -24,77 +25,102 @@ const excludePromise = <T>(args: T) => {
 // main
 // -----------------------------------------------------------------------------
 
-export type CliOpts = MapOrUndefined<UserQuest>
+export type CliOpts = YArgsOpts
 
-type YArgsOpts = MapOrUndefined<UserQuest>
+type YArgsOpts = UserQuest & {
+  noQuest: boolean
+}
 
 const groups = {
-  meta: 'Project metadata',
-  features: 'Features',
+  meta: 'Project metadata:',
+  features: 'Features:',
 }
 
 const getYArgs: Task<YArgsOpts> = () =>
   excludePromise(
     yargs(hideBin(process.argv))
+      // Group: Options
+      .option('noQuest', {
+        alias: 'q',
+        default: false,
+        type: 'boolean',
+        description: "Don't ask questions",
+      })
+
+      // Group: Meta
       .option('name', {
         alias: 'n',
+        default: defaults.name,
         type: 'string',
         group: groups.meta,
         description: descriptions.name,
       })
       .option('homepage', {
         alias: 'h',
+        default: defaults.homepage,
         type: 'string',
         group: groups.meta,
         description: descriptions.homepage,
       })
       .option('projectVersion', {
         alias: 'v',
+        default: defaults.projectVersion,
         type: 'string',
         group: groups.meta,
         description: descriptions.projectVersion,
       })
       .option('license', {
+        default: defaults.license,
         type: 'string',
         group: groups.meta,
         description: descriptions.license,
       })
+
+      // Group: Features
       .option('prettier', {
+        default: defaults.prettier,
         type: 'boolean',
         group: groups.features,
         description: descriptions.prettier,
       })
       .option('eslint', {
+        default: defaults.eslint,
         type: 'boolean',
         group: groups.features,
         description: descriptions.eslint,
       })
       .option('jest', {
+        default: defaults.jest,
         type: 'boolean',
         group: groups.features,
         description: descriptions.jest,
       })
       .option('fastCheck', {
+        default: defaults.fastCheck,
         type: 'boolean',
         group: groups.features,
         description: descriptions.fastCheck,
       })
       .option('docsTs', {
+        default: defaults.docsTs,
         type: 'boolean',
         group: groups.features,
         description: descriptions.docsTs,
       })
       .option('ghActions', {
+        default: defaults.ghActions,
         type: 'boolean',
         group: groups.features,
         description: descriptions.ghActions,
       })
       .option('vscode', {
+        default: defaults.vscode,
         type: 'boolean',
         group: groups.features,
         description: descriptions.vscode,
       })
       .option('markdownMagic', {
+        default: defaults.markdownMagic,
         type: 'boolean',
         group: groups.features,
         description: descriptions.markdownMagic,
