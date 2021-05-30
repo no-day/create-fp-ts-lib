@@ -1,6 +1,5 @@
 import * as PromptsTypeMap from 'fp-ts/lib/Option'
 import * as T from 'fp-ts/lib/Task'
-import * as RTE from 'fp-ts/ReaderTaskEither'
 import * as TE from 'fp-ts/TaskEither'
 import prompts_, { PromptObject } from 'prompts'
 import { get } from '@no-day/ts-prefix'

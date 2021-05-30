@@ -1,6 +1,4 @@
-import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { TaskEither } from 'fp-ts/lib/TaskEither'
-import { Config } from './Config'
 import { flow } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 import * as fs from 'fs'

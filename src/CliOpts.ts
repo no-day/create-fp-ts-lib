@@ -1,4 +1,3 @@
-import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import { Option } from 'fp-ts/lib/Option'
@@ -8,6 +7,7 @@ import { pipe } from 'fp-ts/lib/function'
 import { Task } from 'fp-ts/lib/Task'
 import * as T from 'fp-ts/lib/Task'
 import * as R from 'fp-ts/lib/Record'
+import { descriptions } from './descriptions'
 
 // -----------------------------------------------------------------------------
 // util
@@ -17,7 +17,7 @@ type MapOption<T> = { [key in keyof T]: Option<T[key]> }
 
 type MapOrUndefined<T> = { [key in keyof T]: T[key] | undefined }
 
-const eliminatePromise = <T>(args: T) => {
+const excludePromise = <T>(args: T) => {
   type EliminatePromise<H> = H extends Promise<any> ? never : H
   console.log(args)
   return Promise.resolve(args as EliminatePromise<typeof args>)
@@ -39,61 +39,58 @@ export type CliOpts = MapOption<UserQuest>
 type YArgsOpts = MapOrUndefined<UserQuest>
 
 const getYArgs: Task<YArgsOpts> = () =>
-  eliminatePromise(
+  excludePromise(
     yargs(hideBin(process.argv))
       .option('name', {
         alias: 'n',
         type: 'string',
-        description: 'TODO',
+        description: descriptions.name,
       })
       .option('homepage', {
         alias: 'h',
         type: 'string',
-        description: 'TODO',
+        description: descriptions.homepage,
       })
       .option('version', {
         alias: 'v',
         type: 'string',
-        description: 'TODO',
+        description: descriptions.version,
       })
       .option('license', {
-        alias: 'l',
         type: 'string',
-        description: 'TODO',
+        description: descriptions.license,
       })
       .option('prettier', {
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.prettier,
       })
       .option('eslint', {
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.eslint,
       })
       .option('jest', {
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.jest,
       })
       .option('fastCheck', {
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.fastCheck,
       })
       .option('docsTs', {
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.docsTs,
       })
       .option('ghActions', {
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.ghActions,
       })
       .option('vscode', {
-        alias: 'h',
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.vscode,
       })
       .option('markdownMagic', {
-        alias: 'h',
         type: 'boolean',
-        description: 'TODO',
+        description: descriptions.markdownMagic,
       }).argv
   )
 

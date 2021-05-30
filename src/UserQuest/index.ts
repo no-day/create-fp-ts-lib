@@ -1,12 +1,10 @@
-import * as RTE from 'fp-ts/ReaderTaskEither'
-import * as TE from 'fp-ts/TaskEither'
+import * as RTE from '../ReaderTaskEither'
 import * as O from 'fp-ts/Option'
-import { prompts } from '../prompts'
-import { constVoid, pipe } from 'fp-ts/lib/function'
+import { prompts as prompts_ } from '../prompts'
+import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
 import { CliOpts } from '../CliOpts'
-import TaskEither = TE.TaskEither
 import { descriptions } from '../descriptions'
 
 // -----------------------------------------------------------------------------
@@ -17,7 +15,9 @@ type Env = { cap: unknown; cliOpts: CliOpts }
 
 type Effect<A> = RTE.ReaderTaskEither<Env, string, A>
 
-const getName: Effect<string> = ({ cliOpts: { name } }) =>
+const prompts = flow(prompts_, RTE.fromTaskEither)
+
+const getName: Effect<string> = RTE.scope(({ cliOpts: { name } }) =>
   pipe(
     name,
     O.match(
@@ -26,11 +26,13 @@ const getName: Effect<string> = ({ cliOpts: { name } }) =>
           type: 'text',
           message: descriptions.name,
         }),
-      TE.of
+
+      RTE.of
     )
   )
+)
 
-const getHomepage: Effect<string> = ({ cliOpts: { homepage } }) =>
+const getHomepage: Effect<string> = RTE.scope(({ cliOpts: { homepage } }) =>
   pipe(
     homepage,
     O.match(
@@ -40,53 +42,71 @@ const getHomepage: Effect<string> = ({ cliOpts: { homepage } }) =>
           message: descriptions.homepage,
           initial: 'http://',
         }),
-      TE.of
+      RTE.of
     )
   )
+)
 
-const getVersion: Effect<string> = () =>
-  prompts({
-    type: 'text',
-    message: descriptions.version,
-    initial: '1.0.0',
-  })
+const getVersion: Effect<string> = RTE.scope(({ cliOpts: { version } }) =>
+  pipe(
+    version,
+    O.match(
+      () =>
+        prompts({
+          type: 'text',
+          message: descriptions.version,
+          initial: '1.0.0',
+        }),
+      RTE.of
+    )
+  )
+)
 
-const getPrettier: Effect<boolean> = () =>
-  prompts({
-    type: 'toggle',
-    message: 'use prettier',
-    initial: true,
-    active: 'yes',
-    inactive: 'no',
-  })
+const getPrettier: Effect<boolean> = RTE.scope(({ cliOpts: { prettier } }) =>
+  pipe(
+    prettier,
+    O.match(
+      () =>
+        prompts({
+          type: 'toggle',
+          message: 'use prettier',
+          initial: true,
+          active: 'yes',
+          inactive: 'no',
+        }),
+      RTE.of
+    )
+  )
+)
 
-const confirm: (o: { name: string }) => Effect<void> = ({ name }) => () =>
+const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
   pipe(
     prompts({
       type: 'confirm',
       message: `ready to setup project in folder \`${name}\`?`,
       initial: true,
     }),
-    TE.chain((confirmed) =>
-      confirmed ? TE.of(constVoid()) : TE.left('Aborted by user')
+    RTE.chain((confirmed) =>
+      confirmed ? RTE.of(constVoid()) : RTE.left('Aborted by user')
     )
   )
 
-export const getQuest: Effect<UserQuest> = (env) =>
+export const getQuest: Effect<UserQuest> = RTE.scope(() =>
   pipe(
-    TE.Do,
-    TE.bind('name', () => getName(env)),
-    TE.bind('homepage', () => getHomepage(env)),
-    TE.bind('version', () => getVersion(env)),
-    TE.bind('prettier', () => getPrettier(env)),
-    TE.bind('license', () => TE.of('MIT')),
-    TE.bind('eslint', () => TE.of(true)),
-    TE.bind('jest', () => TE.of(true)),
-    TE.bind('fastCheck', () => TE.of(true)),
-    TE.bind('docsTs', () => TE.of(true)),
-    TE.bind('ghActions', () => TE.of(true)),
-    TE.bind('vscode', () => TE.of(true)),
-    TE.bind('markdownMagic', () => TE.of(true)),
-    TE.chainFirst(() => TE.fromIO(log(''))),
-    TE.chainFirst(({ name }) => confirm({ name })(env))
+    RTE.Do,
+    RTE.bind('name', () => getName),
+    RTE.bind('homepage', () => getHomepage),
+    RTE.bind('version', () => getVersion),
+    RTE.bind('prettier', () => getPrettier),
+    RTE.bind('license', () => RTE.of('MIT')),
+    RTE.bind('eslint', () => RTE.of(true)),
+    RTE.bind('jest', () => RTE.of(true)),
+    RTE.bind('fastCheck', () => RTE.of(true)),
+    RTE.bind('docsTs', () => RTE.of(true)),
+    RTE.bind('ghActions', () => RTE.of(true)),
+    RTE.bind('vscode', () => RTE.of(true)),
+    RTE.bind('markdownMagic', () => RTE.of(true)),
+    RTE.chainFirst(() => RTE.fromIO(log(''))),
+    RTE.chainFirst(({ name }) => confirm({ name }))
   )
+)
