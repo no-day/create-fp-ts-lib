@@ -69,12 +69,9 @@ const scripts: Effect<PackageJson['scripts']> = RTE.scope(() =>
   })
 )
 
-const peerDependencies: Effect<PackageJson['peerDependencies']> = RTE.scope(
-  () =>
-    RTE.of({
-      'fp-ts': '^2.9.5',
-    })
-)
+const peerDependencies: Effect<PackageJson['peerDependencies']> = RTE.of({
+  'fp-ts': '^2.9.5',
+})
 
 const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(({ config }) =>
   pipe(

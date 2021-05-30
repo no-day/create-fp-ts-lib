@@ -2,14 +2,14 @@ import * as RTE from '../ReaderTaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
 import { FileObj, FileObj_ } from '../FileObj'
-import { modify } from '@no-day/ts-prefix'
-import * as R from 'fp-ts/Record'
+import { merge } from '@no-day/ts-prefix'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { prettierConfig } from '../prettier-config'
 import { Json } from '../Json'
+import { PackageJson } from '../PackageJson'
 
 // -----------------------------------------------------------------------------
 // types
@@ -43,18 +43,35 @@ type OutFiles = Extends<
 // Effect
 // -----------------------------------------------------------------------------
 
-const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(({ files }) =>
-  pipe(
-    files['package.json'],
-    modify('data', (data) =>
-      pipe(
-        data,
-        modify('dependencies', R.upsertAt('prettier', '^2.2.1')),
-        modify('scripts', R.upsertAt('pretty', 'yarn prettier --check .'))
-      )
-    ),
-    RTE.of
-  )
+const dependencies: Effect<PackageJson['dependencies']> = pipe(
+  {
+    prettier: '^2.2.1',
+  },
+  RTE.of
+)
+
+const scripts: Effect<PackageJson['scripts']> = pipe(
+  {
+    pretty: 'yarn prettier --check .',
+  },
+  RTE.of
+)
+
+const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(
+  ({
+    files: {
+      'package.json': { data },
+    },
+  }) =>
+    pipe(
+      {
+        dependencies: pipe(dependencies, RTE.map(merge(data.dependencies))),
+        scripts: pipe(scripts, RTE.map(merge(data.scripts))),
+      },
+      sequenceS(RTE.ApplySeq),
+      RTE.map(merge(data)),
+      RTE.map(tag('PackageJson'))
+    )
 )
 
 const prettierRc: Effect<FileObj_['Json']> = pipe(
