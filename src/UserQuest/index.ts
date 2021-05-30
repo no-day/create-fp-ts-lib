@@ -3,21 +3,21 @@ import { prompts as prompts_ } from '../prompts'
 import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
-import { CliOpts } from '../CliOpts'
 import { descriptions } from './descriptions'
 import { defaults } from './defaults'
+import { Config } from '../Config/type'
 
 // -----------------------------------------------------------------------------
 // Effect
 // -----------------------------------------------------------------------------
 
-type Env = { cap: unknown; cliOpts: CliOpts }
+type Env = { cap: unknown; config: Config }
 
 type Effect<A> = RTE.ReaderTaskEither<Env, string, A>
 
 const prompts = flow(prompts_, RTE.fromTaskEither)
 
-const getName: Effect<string> = RTE.scope(({ cliOpts: { name } }) =>
+const getName: Effect<string> = RTE.scope(({ config: { name } }) =>
   prompts({
     type: 'text',
     initial: name,
@@ -25,7 +25,7 @@ const getName: Effect<string> = RTE.scope(({ cliOpts: { name } }) =>
   })
 )
 
-const getHomepage: Effect<string> = RTE.scope(({ cliOpts: { homepage } }) =>
+const getHomepage: Effect<string> = RTE.scope(({ config: { homepage } }) =>
   prompts({
     type: 'text',
     message: descriptions.homepage,
@@ -34,7 +34,7 @@ const getHomepage: Effect<string> = RTE.scope(({ cliOpts: { homepage } }) =>
 )
 
 const getProjectVersion: Effect<string> = RTE.scope(
-  ({ cliOpts: { projectVersion } }) =>
+  ({ config: { projectVersion } }) =>
     prompts({
       type: 'text',
       message: descriptions.projectVersion,
@@ -42,7 +42,7 @@ const getProjectVersion: Effect<string> = RTE.scope(
     })
 )
 
-const getPrettier: Effect<boolean> = RTE.scope(({ cliOpts: { prettier } }) =>
+const getPrettier: Effect<boolean> = RTE.scope(({ config: { prettier } }) =>
   prompts({
     type: 'toggle',
     message: descriptions.prettier,
@@ -52,7 +52,7 @@ const getPrettier: Effect<boolean> = RTE.scope(({ cliOpts: { prettier } }) =>
   })
 )
 
-const getLicense: Effect<string> = RTE.scope(({ cliOpts: { license } }) =>
+const getLicense: Effect<string> = RTE.scope(({ config: { license } }) =>
   prompts({
     type: 'text',
     message: descriptions.license,
@@ -90,7 +90,7 @@ const getQuest: Effect<UserQuest> = pipe(
   RTE.chainFirst(({ name }) => confirm({ name }))
 )
 
-const main: Effect<UserQuest> = RTE.scope(({ cliOpts: { noQuest } }) =>
+const main: Effect<UserQuest> = RTE.scope(({ config: { noQuest } }) =>
   noQuest ? RTE.of(defaults) : getQuest
 )
 

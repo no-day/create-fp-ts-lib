@@ -4,7 +4,7 @@ import * as R from 'fp-ts/Record'
 import * as path from 'path'
 import { constVoid, pipe } from 'fp-ts/lib/function'
 import { FileObj, print } from './FileObj'
-import { Config } from './Config'
+import { Config } from './Config/type'
 import { Capabilities } from './Capabilities'
 
 // -----------------------------------------------------------------------------
@@ -33,7 +33,10 @@ const writeFile: (_1: string, _2: FileObj) => Effect<void> = (
     pipe(
       RTE.Do,
       RTE.bind('filePath', () =>
-        pipe(path.join(config.name, filePath), RTE.of)
+        pipe(
+          config.inPlace ? filePath : path.join(config.name, filePath),
+          RTE.of
+        )
       ),
       RTE.bind('dirPath', (s) => pipe(path.dirname(s.filePath), RTE.of)),
       RTE.chainFirst((s) => cap.mkDir(s.dirPath, { recursive: true })),
@@ -43,7 +46,9 @@ const writeFile: (_1: string, _2: FileObj) => Effect<void> = (
   )
 
 const mkDir: Effect<void> = RTE.scope(({ config, cap }) =>
-  cap.mkDir(config.name, { recursive: false })
+  config.inPlace
+    ? RTE.of(constVoid())
+    : cap.mkDir(config.name, { recursive: false })
 )
 
 const writeFiles: Effect<void> = RTE.scope(({ files }) =>

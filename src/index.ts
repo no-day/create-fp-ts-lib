@@ -3,36 +3,15 @@ import { Task } from 'fp-ts/Task'
 import * as TE from 'fp-ts/TaskEither'
 import * as T from 'fp-ts/Task'
 import * as I from 'fp-ts/IO'
-import featureSkeleton from './features/skeleton'
-import featurePrettier from './features/prettier'
-import * as FileSystem from './FileSystem'
 import { log } from 'fp-ts/lib/Console'
-import { getCliOpts } from './CliOpts'
-import { capabilities } from './Capabilities'
-import { merge } from '@no-day/ts-prefix'
-import getQuest from './UserQuest'
+import * as app from './app'
 
-const setup: TE.TaskEither<string, void> = pipe(
-  TE.Do,
-  TE.bind('cap', () => TE.of(capabilities)),
-  TE.bind('cliOpts', () => TE.fromTask(getCliOpts)),
-  TE.bind('config', ({ cliOpts, cap }) => getQuest({ cap, cliOpts })),
-  TE.chain(({ config, cap }) =>
-    pipe(
-      TE.of({}),
-      TE.chain((files) =>
-        pipe(featureSkeleton({ cap, config, files }), TE.map(merge(files)))
-      ),
-      TE.chain((files) =>
-        pipe(featurePrettier({ cap, config, files }), TE.map(merge(files)))
-      ),
-      TE.chain((files) => FileSystem.writeOut({ files, cap, config }))
-    )
-  )
-)
+// -----------------------------------------------------------------------------
+// effect
+// -----------------------------------------------------------------------------
 
-export const main: Task<void> = pipe(
-  setup,
+const main: Task<void> = pipe(
+  app.main,
   TE.getOrElse((e) =>
     pipe(
       log(`ERROR: ${e}`),
@@ -41,3 +20,9 @@ export const main: Task<void> = pipe(
     )
   )
 )
+
+// -----------------------------------------------------------------------------
+// export
+// -----------------------------------------------------------------------------
+
+export { main }

@@ -1,10 +1,9 @@
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-import { UserQuest } from './UserQuest/type'
-import { pipe } from 'fp-ts/lib/function'
 import { Task } from 'fp-ts/lib/Task'
-import { descriptions } from './UserQuest/descriptions'
-import { defaults } from './UserQuest/defaults'
+import { Config } from './type'
+import { defaults } from '../UserQuest/defaults'
+import { descriptions } from '../UserQuest/descriptions'
 
 // -----------------------------------------------------------------------------
 // util
@@ -19,18 +18,12 @@ const excludePromise = <T>(args: T) => {
 // main
 // -----------------------------------------------------------------------------
 
-type CliOpts = YArgsOpts
-
-type YArgsOpts = UserQuest & {
-  noQuest: boolean
-}
-
 const groups = {
   meta: 'Project metadata:',
   features: 'Features:',
 }
 
-const getYArgs: Task<YArgsOpts> = () =>
+const getCliOpts: Task<Config> = () =>
   excludePromise(
     yargs(hideBin(process.argv))
       // Group: Options
@@ -39,6 +32,12 @@ const getYArgs: Task<YArgsOpts> = () =>
         default: false,
         boolean: true,
         description: "Don't ask questions",
+      })
+      .option('inPlace', {
+        alias: 'u',
+        default: false,
+        boolean: true,
+        description: 'Use current directory',
       })
 
       // Group: Meta
@@ -121,10 +120,8 @@ const getYArgs: Task<YArgsOpts> = () =>
       }).argv
   )
 
-const getCliOpts = pipe(getYArgs)
-
 // -----------------------------------------------------------------------------
 // export
 // -----------------------------------------------------------------------------
 
-export { CliOpts, getCliOpts }
+export { getCliOpts }

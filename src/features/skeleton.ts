@@ -8,7 +8,7 @@ import { Extends, tag } from '../type-utils'
 import { FileObj, FileObj_ } from '../FileObj'
 import { call } from '@no-day/ts-prefix'
 import { Capabilities } from '../Capabilities'
-import { Config } from '../Config'
+import { Config } from '../Config/type'
 import { scope } from '../ReaderTaskEither'
 import { PackageJson } from '../PackageJson'
 
