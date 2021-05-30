@@ -2,14 +2,21 @@ import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { flow } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 import * as fs from 'fs'
+import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 export type Capabilities = {
   mkDir: (
     path: string,
     opts: { recursive: boolean }
-  ) => TaskEither<string, void>
-  writeFile: (path: string, content: string) => TaskEither<string, void>
-  readFile: (path: string) => TaskEither<string, string>
+  ) => ReaderTaskEither<Record<string, unknown>, string, void>
+  writeFile: (
+    path: string,
+    content: string
+  ) => ReaderTaskEither<Record<string, unknown>, string, void>
+  readFile: (
+    path: string
+  ) => ReaderTaskEither<Record<string, unknown>, string, string>
 }
 
 const writeFile: (
@@ -29,17 +36,20 @@ const mkdir: (
 export const capabilities: Capabilities = {
   mkDir: flow(
     mkdir,
-    TE.mapLeft(() => 'MKDIR ERROR')
+    RTE.fromTaskEither,
+    RTE.mapLeft(() => 'MKDIR ERROR')
   ),
 
   writeFile: flow(
     writeFile,
-    TE.mapLeft(() => 'WRITE FILE ERROR')
+    RTE.fromTaskEither,
+    RTE.mapLeft(() => 'WRITE FILE ERROR')
   ),
 
   readFile: flow(
     readFile,
-    TE.mapLeft(() => 'READ FILE ERROR'),
-    TE.map((_) => _.toString())
+    RTE.fromTaskEither,
+    RTE.mapLeft(() => 'READ FILE ERROR'),
+    RTE.map((_) => _.toString())
   ),
 }

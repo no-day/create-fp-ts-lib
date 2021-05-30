@@ -43,7 +43,7 @@ const getYArgs: Task<YArgsOpts> = () =>
       .option('noQuest', {
         alias: 'q',
         default: false,
-        type: 'boolean',
+        boolean: true,
         description: "Don't ask questions",
       })
 
@@ -79,49 +79,49 @@ const getYArgs: Task<YArgsOpts> = () =>
       // Group: Features
       .option('prettier', {
         default: defaults.prettier,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.prettier,
       })
       .option('eslint', {
         default: defaults.eslint,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.eslint,
       })
       .option('jest', {
         default: defaults.jest,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.jest,
       })
       .option('fastCheck', {
         default: defaults.fastCheck,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.fastCheck,
       })
       .option('docsTs', {
         default: defaults.docsTs,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.docsTs,
       })
       .option('ghActions', {
         default: defaults.ghActions,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.ghActions,
       })
       .option('vscode', {
         default: defaults.vscode,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.vscode,
       })
       .option('markdownMagic', {
         default: defaults.markdownMagic,
-        type: 'boolean',
+        boolean: true,
         group: groups.features,
         description: descriptions.markdownMagic,
       }).argv

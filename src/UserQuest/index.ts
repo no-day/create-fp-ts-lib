@@ -46,10 +46,18 @@ const getProjectVersion: Effect<string> = RTE.scope(
 const getPrettier: Effect<boolean> = RTE.scope(({ cliOpts: { prettier } }) =>
   prompts({
     type: 'toggle',
-    message: 'use prettier',
+    message: descriptions.prettier,
     initial: prettier,
     active: 'yes',
     inactive: 'no',
+  })
+)
+
+const getLicense: Effect<string> = RTE.scope(({ cliOpts: { license } }) =>
+  prompts({
+    type: 'text',
+    message: descriptions.license,
+    initial: license,
   })
 )
 
@@ -65,13 +73,13 @@ const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
     )
   )
 
-const getAnswers: Effect<UserQuest> = pipe(
+const getQuest: Effect<UserQuest> = pipe(
   RTE.Do,
   RTE.bind('name', () => getName),
   RTE.bind('homepage', () => getHomepage),
   RTE.bind('projectVersion', () => getProjectVersion),
   RTE.bind('prettier', () => getPrettier),
-  RTE.bind('license', () => RTE.of('MIT')),
+  RTE.bind('license', () => getLicense),
   RTE.bind('eslint', () => RTE.of(true)),
   RTE.bind('jest', () => RTE.of(true)),
   RTE.bind('fastCheck', () => RTE.of(true)),
@@ -83,6 +91,8 @@ const getAnswers: Effect<UserQuest> = pipe(
   RTE.chainFirst(({ name }) => confirm({ name }))
 )
 
-export const getQuest: Effect<UserQuest> = RTE.scope(
-  ({ cliOpts: { noQuest } }) => (noQuest ? RTE.of(defaults) : getAnswers)
+const main: Effect<UserQuest> = RTE.scope(({ cliOpts: { noQuest } }) =>
+  noQuest ? RTE.of(defaults) : getQuest
 )
+
+export default main

@@ -101,7 +101,6 @@ const indexTs: Effect<FileObj_['Text']> = RTE.scope(({ config, cap }) =>
   pipe(
     path.join(assetsDir, 'src/index.ts'),
     cap.readFile,
-    RTE.fromTaskEither,
     RTE.map((x) => Mustache.render(x, config)),
     RTE.map(splitLines),
     RTE.map(tag('Text'))
@@ -112,7 +111,6 @@ const tsConfig: Effect<FileObj_['Text']> = scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.json'),
     cap.readFile,
-    RTE.fromTaskEither,
     RTE.map(splitLines),
     RTE.map(tag('Text'))
   )
@@ -122,7 +120,6 @@ const tsConfigBuild: Effect<FileObj_['Text']> = scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.build.json'),
     cap.readFile,
-    RTE.fromTaskEither,
     RTE.map(splitLines),
     RTE.map(tag('Text'))
   )

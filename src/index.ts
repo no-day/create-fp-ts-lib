@@ -8,9 +8,9 @@ import featurePrettier from './features/prettier'
 import * as FileSystem from './FileSystem'
 import { log } from 'fp-ts/lib/Console'
 import { getCliOpts } from './CliOpts'
-import { getQuest } from './UserQuest'
 import { capabilities } from './Capabilities'
 import { merge } from '@no-day/ts-prefix'
+import getQuest from './UserQuest'
 
 const setup: TE.TaskEither<string, void> = pipe(
   TE.Do,
