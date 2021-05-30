@@ -17,7 +17,15 @@ export const prompts = <Opts extends Omit<PromptObject<'value'>, 'name'>>(
   opts: Opts
 ): TE.TaskEither<string, GetMaybe<PromptsTypeMap, Opts['type']>> =>
   pipe(
-    () => prompts_({ ...opts, name: 'value' }),
+    () =>
+      prompts_(
+        { ...opts, name: 'value' },
+        {
+          onCancel: () => {
+            process.exit(1)
+          },
+        }
+      ),
     T.map(get('value')),
     (x) => TE.fromTask(x)
   )

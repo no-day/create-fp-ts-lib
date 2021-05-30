@@ -1,16 +1,16 @@
 import { UserQuest } from './UserQuest/type'
 
 export const descriptions: { [key in keyof UserQuest]: string } = {
-  name: 'project name',
-  homepage: 'project homepage URL',
-  projectVersion: 'project version',
-  license: 'project license',
-  prettier: 'use prettier',
-  eslint: 'use eslint',
-  jest: 'use jest',
-  fastCheck: 'use fast-check',
-  docsTs: 'use docs-ts',
-  ghActions: 'use GitHub actions',
-  vscode: 'use vscode tasks',
-  markdownMagic: 'use markdown-magic',
+  name: 'Project name',
+  homepage: 'Project homepage URL',
+  projectVersion: 'Project version',
+  license: 'Project license',
+  prettier: 'Use prettier',
+  eslint: 'Use eslint',
+  jest: 'Use jest',
+  fastCheck: 'Use fast-check',
+  docsTs: 'Use docs-ts',
+  ghActions: 'Use GitHub actions',
+  vscode: 'Use vscode tasks',
+  markdownMagic: 'Use markdown-magic',
 }

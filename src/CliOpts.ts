@@ -28,58 +28,75 @@ export type CliOpts = MapOrUndefined<UserQuest>
 
 type YArgsOpts = MapOrUndefined<UserQuest>
 
+const groups = {
+  meta: 'Project metadata',
+  features: 'Features',
+}
+
 const getYArgs: Task<YArgsOpts> = () =>
   excludePromise(
     yargs(hideBin(process.argv))
       .option('name', {
         alias: 'n',
         type: 'string',
+        group: groups.meta,
         description: descriptions.name,
       })
       .option('homepage', {
         alias: 'h',
         type: 'string',
+        group: groups.meta,
         description: descriptions.homepage,
       })
       .option('projectVersion', {
         alias: 'v',
         type: 'string',
+        group: groups.meta,
         description: descriptions.projectVersion,
       })
       .option('license', {
         type: 'string',
+        group: groups.meta,
         description: descriptions.license,
       })
       .option('prettier', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.prettier,
       })
       .option('eslint', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.eslint,
       })
       .option('jest', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.jest,
       })
       .option('fastCheck', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.fastCheck,
       })
       .option('docsTs', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.docsTs,
       })
       .option('ghActions', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.ghActions,
       })
       .option('vscode', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.vscode,
       })
       .option('markdownMagic', {
         type: 'boolean',
+        group: groups.features,
         description: descriptions.markdownMagic,
       }).argv
   )
