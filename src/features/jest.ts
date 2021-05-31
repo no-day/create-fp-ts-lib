@@ -10,6 +10,9 @@ import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { Json } from '../Json'
 import { Linter } from 'eslint'
 import { PackageJson } from '../PackageJson'
+import * as path from 'path'
+import { assetsDirRoot } from '../assets-dir'
+import { splitLines } from '../split-lines'
 
 // -----------------------------------------------------------------------------
 // types
@@ -35,39 +38,32 @@ type InFiles = Extends<
 type OutFiles = Extends<
   Record<string, FileObj>,
   {
-    'package.json': FileObjects['PackageJson']
-    '.eslintrc': FileObjects['Json']
-    '.eslintignore': FileObjects['Text']
+    'jest.config.js': FileObjects['Text']
+    'tests/index.ts': FileObjects['Text']
   }
 >
 
 // -----------------------------------------------------------------------------
-// constants
+// constant
 // -----------------------------------------------------------------------------
 
-const eslintConfig: Linter.Config = {
-  root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  env: { node: true },
-  rules: {},
-}
+const assetsDir = path.join(assetsDirRoot, 'jest')
 
 // -----------------------------------------------------------------------------
 // effect
 // -----------------------------------------------------------------------------
 
 const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  eslint: '^7.27.0',
-  '@typescript-eslint/eslint-plugin': '^4.25.0',
-  '@typescript-eslint/parser': '^4.25.0',
+  '@types/jest': '^26.0.20',
+  jest: '^26.6.3',
+  'ts-jest': '^26.5.3',
 })
 
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(
   ({ config: { packageManager } }) =>
     RTE.of({
-      lint: `${packageManager} run eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0`,
+      test: `${packageManager} run jest`,
+      'test:watch': `${packageManager} run jest --watch`,
     })
 )
 
@@ -91,23 +87,29 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     )
 )
 
-const eslintIgnore: Effect<FileObjects['Text']> = pipe(
-  ['node_modules', 'dist', 'coverage'],
-  tag('Text'),
-  RTE.of
+const jestConfigJs: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
+  pipe(
+    path.join(assetsDir, 'jest.config.js'),
+    cap.readFile,
+    RTE.map(splitLines),
+    RTE.map(tag('Text'))
+  )
 )
 
-const eslintRc: Effect<FileObjects['Json']> = pipe(
-  eslintConfig as Json,
-  tag('Json'),
-  RTE.of
+const indexTs: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
+  pipe(
+    path.join(assetsDir, 'tests/index.ts'),
+    cap.readFile,
+    RTE.map(splitLines),
+    RTE.map(tag('Text'))
+  )
 )
 
 const main: Effect<OutFiles> = pipe(
   {
     'package.json': packageJson,
-    '.eslintrc': eslintRc,
-    '.eslintignore': eslintIgnore,
+    'jest.config.js': jestConfigJs,
+    'tests/index.ts': indexTs,
   },
   sequenceS(RTE.ApplySeq)
 )

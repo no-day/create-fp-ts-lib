@@ -59,7 +59,7 @@ const readFile: Capabilities['readFile'] = (name) =>
   pipe(
     implReadFile(name),
     RTE.fromTaskEither,
-    RTE.mapLeft(() => 'Cannot read file `name`'),
+    RTE.mapLeft(() => `Cannot read file ${name}`),
     RTE.map((_) => _.toString())
   )
 

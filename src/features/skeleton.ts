@@ -1,5 +1,4 @@
 import * as RTE from '../ReaderTaskEither'
-import { TaskEither } from 'fp-ts/lib/TaskEither'
 import * as path from 'path'
 import * as Mustache from 'mustache'
 import { sequenceS } from 'fp-ts/lib/Apply'
@@ -8,10 +7,10 @@ import { Extends, tag } from '../type-utils'
 import { FileObj, FileObjects } from '../FileObj'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
-import { scope } from '../ReaderTaskEither'
 import { PackageJson } from '../PackageJson'
-import { assetsDir } from '../assets-dir'
+import { assetsDirRoot } from '../assets-dir'
 import { splitLines } from '../split-lines'
+import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 
 // -----------------------------------------------------------------------------
 // types
@@ -37,7 +36,15 @@ type Env = {
   files: InFiles
 }
 
-type Effect<A> = (env: Env) => TaskEither<string, A>
+type Error = string
+
+type Effect<A> = ReaderTaskEither<Env, Error, A>
+
+// -----------------------------------------------------------------------------
+// constant
+// -----------------------------------------------------------------------------
+
+const assetsDir = path.join(assetsDirRoot, 'skeleton')
 
 // -----------------------------------------------------------------------------
 // effect
@@ -96,7 +103,7 @@ const indexTs: Effect<FileObjects['Text']> = RTE.scope(({ config, cap }) =>
   )
 )
 
-const tsConfig: Effect<FileObjects['Text']> = scope(({ cap }) =>
+const tsConfig: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.json'),
     cap.readFile,
@@ -105,7 +112,7 @@ const tsConfig: Effect<FileObjects['Text']> = scope(({ cap }) =>
   )
 )
 
-const tsConfigBuild: Effect<FileObjects['Text']> = scope(({ cap }) =>
+const tsConfigBuild: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.build.json'),
     cap.readFile,
@@ -114,7 +121,7 @@ const tsConfigBuild: Effect<FileObjects['Text']> = scope(({ cap }) =>
   )
 )
 
-const tsConfigSettings: Effect<FileObjects['Text']> = scope(({ cap }) =>
+const tsConfigSettings: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.settings.json'),
     cap.readFile,

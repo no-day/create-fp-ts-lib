@@ -3,6 +3,7 @@ import * as TE from 'fp-ts/TaskEither'
 import featureSkeleton from './features/skeleton'
 import featurePrettier from './features/prettier'
 import featureEsLint from './features/eslint'
+import featureJest from './features/jest'
 import { FileSystem } from './FileSystem'
 import * as FS from './FileSystem'
 import { Capabilities, capabilities } from './Capabilities'
@@ -26,7 +27,11 @@ type Effect<A> = TE.TaskEither<Error, A>
 const getConfig: (_1: Capabilities) => Effect<Config> = (cap) =>
   pipe(
     TE.fromTask<string, Config>(getCliOpts),
-    TE.chain((config) => pipe(getQuest({ cap, config }), TE.map(merge(config))))
+    TE.chain((config) =>
+      config.noQuest
+        ? TE.of(config)
+        : pipe(getQuest({ cap, config }), TE.map(merge(config)))
+    )
   )
 
 const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
@@ -46,6 +51,11 @@ const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
     TE.chain((files) =>
       config.eslint
         ? pipe(featureEsLint({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
+    ),
+    TE.chain((files) =>
+      config.eslint
+        ? pipe(featureJest({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
     )
   )

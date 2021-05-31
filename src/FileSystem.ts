@@ -33,10 +33,7 @@ const writeFile: (_1: string, _2: FileObj) => Effect<void> = (
     pipe(
       RTE.Do,
       RTE.bind('filePath', () =>
-        pipe(
-          config.inPlace ? filePath : path.join(config.name, filePath),
-          RTE.of
-        )
+        RTE.of(config.inPlace ? filePath : path.join(config.name, filePath))
       ),
       RTE.bind('dirPath', (s) => pipe(path.dirname(s.filePath), RTE.of)),
       RTE.chainFirst((s) => cap.mkDir(s.dirPath, { recursive: true })),

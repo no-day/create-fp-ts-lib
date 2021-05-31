@@ -41,7 +41,7 @@ const getPackageManager: Effect<PackageManager> = RTE.scope(
     prompts({
       type: 'select',
       initial: { yarn: 0, npm: 1 }[packageManager],
-      message: descriptions.name,
+      message: descriptions.packageManager,
       choices: [
         { title: 'Yarn', value: 'yarn' as const },
         { title: 'NPM', value: 'npm' as const },
@@ -103,6 +103,16 @@ const getEsLint: Effect<boolean> = RTE.scope(({ config: { eslint } }) =>
   })
 )
 
+const getJest: Effect<boolean> = RTE.scope(({ config: { jest } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.jest,
+    initial: jest,
+    active: 'yes',
+    inactive: 'no',
+  })
+)
+
 const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
   pipe(
     prompts({
@@ -115,7 +125,7 @@ const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
     )
   )
 
-const getQuest: Effect<UserQuest> = pipe(
+const main: Effect<UserQuest> = pipe(
   RTE.Do,
   RTE.bind('name', () => getName),
   RTE.bind('inPlace', () => getInPlace),
@@ -125,7 +135,7 @@ const getQuest: Effect<UserQuest> = pipe(
   RTE.bind('packageManager', () => getPackageManager),
   RTE.bind('prettier', () => getPrettier),
   RTE.bind('eslint', () => getEsLint),
-  RTE.bind('jest', () => RTE.of(true)),
+  RTE.bind('jest', () => getJest),
   RTE.bind('fastCheck', () => RTE.of(true)),
   RTE.bind('docsTs', () => RTE.of(true)),
   RTE.bind('ghActions', () => RTE.of(true)),
@@ -133,10 +143,6 @@ const getQuest: Effect<UserQuest> = pipe(
   RTE.bind('markdownMagic', () => RTE.of(true)),
   RTE.chainFirst(() => RTE.fromIO(log(''))),
   RTE.chainFirst(({ name }) => confirm({ name }))
-)
-
-const main: Effect<UserQuest> = RTE.scope(({ config: { noQuest } }) =>
-  noQuest ? RTE.of(defaults) : getQuest
 )
 
 // -----------------------------------------------------------------------------

@@ -64,7 +64,10 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
   }) =>
     pipe(
       {
-        dependencies: pipe(devDependencies, RTE.map(merge(data.dependencies))),
+        devDependencies: pipe(
+          devDependencies,
+          RTE.map(merge(data.devDependencies))
+        ),
         scripts: pipe(scripts, RTE.map(merge(data.scripts))),
       },
       sequenceS(RTE.ApplySeq),

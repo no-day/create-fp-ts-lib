@@ -12,5 +12,6 @@ $DIR/bin/index.js --noQuest
 cd fp-ts-lib
 
 yarn install
-yarn build
-yarn lint
+yarn run build
+yarn run lint
+yarn run test
