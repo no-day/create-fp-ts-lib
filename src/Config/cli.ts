@@ -14,18 +14,22 @@ const excludePromise = <T>(args: T) => {
   return Promise.resolve(args as EliminatePromise<typeof args>)
 }
 
-const packageManagers: ReadonlyArray<PackageManager> = ['npm', 'yarn']
+// -----------------------------------------------------------------------------
+// constants
+// -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-// main
-// -----------------------------------------------------------------------------
+const packageManagers: ReadonlyArray<PackageManager> = ['npm', 'yarn']
 
 const groups = {
   meta: 'Project metadata:',
   features: 'Features:',
 }
 
-const getCliOpts = () =>
+// -----------------------------------------------------------------------------
+// main
+// -----------------------------------------------------------------------------
+
+const getCliOpts: Task<Config> = () =>
   excludePromise(
     yargs(hideBin(process.argv))
       // Group: Options

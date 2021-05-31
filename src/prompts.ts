@@ -1,4 +1,3 @@
-import * as PromptsTypeMap from 'fp-ts/lib/Option'
 import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/TaskEither'
 import prompts_, { PromptObject } from 'prompts'
@@ -21,7 +20,15 @@ type GetSelectType<Xs> = Xs extends [infer head, ...infer tail]
     : '2'
   : never
 
-type Tuple<T> = [T] | [T, T] | [T, T, T] | [T, T, T, T] | [T, T, T, T, T]
+type Tuple<T> =
+  | [T]
+  | [T, T]
+  | [T, T, T]
+  | [T, T, T, T]
+  | [T, T, T, T, T]
+  | [T, T, T, T, T, T]
+  | [T, T, T, T, T, T, T]
+  | [T, T, T, T, T, T, T, T]
 
 export const prompts = <
   Opts extends Omit<PromptObject<'value'>, 'name'> & {

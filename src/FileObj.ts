@@ -12,13 +12,13 @@ import * as P from 'prettier'
 
 export type Text = string[]
 
-export type FileObj_ = MapTagged<{
+export type FileObjects = MapTagged<{
   PackageJson: PackageJson
   Text: Text
   Json: J.Json
 }>
 
-export type FileObj = Union<FileObj_>
+export type FileObj = Union<FileObjects>
 
 // -----------------------------------------------------------------------------
 // util

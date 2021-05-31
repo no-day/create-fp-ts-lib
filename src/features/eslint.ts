@@ -1,7 +1,7 @@
 import * as RTE from '../ReaderTaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
-import { FileObj, FileObj_ } from '../FileObj'
+import { FileObj, FileObjects } from '../FileObj'
 import { merge } from '@no-day/ts-prefix'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
@@ -21,26 +21,28 @@ type Env = {
   files: InFiles
 }
 
-type Effect<A> = ReaderTaskEither<Env, string, A>
+type Error = string
+
+type Effect<A> = ReaderTaskEither<Env, Error, A>
 
 type InFiles = Extends<
   Record<string, FileObj>,
   {
-    'package.json': FileObj_['PackageJson']
+    'package.json': FileObjects['PackageJson']
   }
 >
 
 type OutFiles = Extends<
   Record<string, FileObj>,
   {
-    'package.json': FileObj_['PackageJson']
-    '.eslintrc': FileObj_['Json']
-    '.eslintignore': FileObj_['Text']
+    'package.json': FileObjects['PackageJson']
+    '.eslintrc': FileObjects['Json']
+    '.eslintignore': FileObjects['Text']
   }
 >
 
 // -----------------------------------------------------------------------------
-//
+// constants
 // -----------------------------------------------------------------------------
 
 const eslintConfig: Linter.Config = {
@@ -55,14 +57,11 @@ const eslintConfig: Linter.Config = {
 // effect
 // -----------------------------------------------------------------------------
 
-const dependencies: Effect<PackageJson['dependencies']> = pipe(
-  {
-    eslint: '^7.27.0',
-    '@typescript-eslint/eslint-plugin': '^4.25.0',
-    '@typescript-eslint/parser': '^4.25.0',
-  },
-  RTE.of
-)
+const dependencies: Effect<PackageJson['dependencies']> = RTE.of({
+  eslint: '^7.27.0',
+  '@typescript-eslint/eslint-plugin': '^4.25.0',
+  '@typescript-eslint/parser': '^4.25.0',
+})
 
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(
   ({ config: { packageManager } }) =>
@@ -74,7 +73,7 @@ const scripts: Effect<PackageJson['scripts']> = RTE.scope(
     )
 )
 
-const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(
+const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
   ({
     files: {
       'package.json': { data },
@@ -91,27 +90,25 @@ const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(
     )
 )
 
-const eslintIgnore: Effect<FileObj_['Text']> = pipe(
+const eslintIgnore: Effect<FileObjects['Text']> = pipe(
   ['node_modules', 'dist', 'coverage'],
   tag('Text'),
   RTE.of
 )
 
-const eslintRc: Effect<FileObj_['Json']> = pipe(
+const eslintRc: Effect<FileObjects['Json']> = pipe(
   eslintConfig as Json,
   tag('Json'),
   RTE.of
 )
 
-const main: Effect<OutFiles> = RTE.scope(() =>
-  pipe(
-    {
-      'package.json': packageJson,
-      '.eslintrc': eslintRc,
-      '.eslintignore': eslintIgnore,
-    },
-    sequenceS(RTE.ApplySeq)
-  )
+const main: Effect<OutFiles> = pipe(
+  {
+    'package.json': packageJson,
+    '.eslintrc': eslintRc,
+    '.eslintignore': eslintIgnore,
+  },
+  sequenceS(RTE.ApplySeq)
 )
 
 // -----------------------------------------------------------------------------

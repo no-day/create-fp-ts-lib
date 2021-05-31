@@ -1,4 +1,5 @@
 import * as RTE from '../ReaderTaskEither'
+import { ReaderTaskEither } from '../ReaderTaskEither'
 import { prompts as prompts_ } from '../prompts'
 import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
@@ -8,14 +9,24 @@ import { defaults } from '../Config/defaults'
 import { Config, PackageManager } from '../Config/type'
 
 // -----------------------------------------------------------------------------
-// Effect
+// types
 // -----------------------------------------------------------------------------
 
 type Env = { cap: unknown; config: Config }
 
-type Effect<A> = RTE.ReaderTaskEither<Env, string, A>
+type Error = string
+
+type Effect<A> = ReaderTaskEither<Env, Error, A>
+
+// -----------------------------------------------------------------------------
+// util
+// -----------------------------------------------------------------------------
 
 const prompts = flow(prompts_, RTE.fromTaskEither)
+
+// -----------------------------------------------------------------------------
+// effect
+// -----------------------------------------------------------------------------
 
 const getName: Effect<string> = RTE.scope(({ config: { name } }) =>
   prompts({
@@ -26,10 +37,10 @@ const getName: Effect<string> = RTE.scope(({ config: { name } }) =>
 )
 
 const getPackageManager: Effect<PackageManager> = RTE.scope(
-  ({ config: { name } }) =>
+  ({ config: { packageManager } }) =>
     prompts({
       type: 'select',
-      initial: 0,
+      initial: { yarn: 0, npm: 1 }[packageManager],
       message: descriptions.name,
       choices: [
         { title: 'Yarn', value: 'yarn' as const },

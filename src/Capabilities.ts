@@ -1,4 +1,5 @@
 import * as TE from 'fp-ts/TaskEither'
+import { TaskEither } from 'fp-ts/TaskEither'
 import * as fs from 'fs'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
@@ -25,16 +26,16 @@ type Capabilities = {
 const implWriteFile: (
   filename: string,
   data: string
-) => TE.TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.writeFile)
+) => TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.writeFile)
 
 const implReadFile: (
   filename: string
-) => TE.TaskEither<NodeJS.ErrnoException, Buffer> = TE.taskify(fs.readFile)
+) => TaskEither<NodeJS.ErrnoException, Buffer> = TE.taskify(fs.readFile)
 
 const implMkdir: (
   filename: string,
   opts: { recursive: boolean }
-) => TE.TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.mkdir)
+) => TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.mkdir)
 
 // -----------------------------------------------------------------------------
 // capabilities

@@ -1,16 +1,17 @@
 import * as RTE from '../ReaderTaskEither'
-import * as TE from 'fp-ts/lib/TaskEither'
+import { TaskEither } from 'fp-ts/lib/TaskEither'
 import * as path from 'path'
 import * as Mustache from 'mustache'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
-import { FileObj, FileObj_ } from '../FileObj'
-import { call } from '@no-day/ts-prefix'
+import { FileObj, FileObjects } from '../FileObj'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { scope } from '../ReaderTaskEither'
 import { PackageJson } from '../PackageJson'
+import { assetsDir } from '../assets-dir'
+import { splitLines } from '../split-lines'
 
 // -----------------------------------------------------------------------------
 // types
@@ -21,12 +22,12 @@ type InFiles = Record<string, FileObj>
 type OutFiles = Extends<
   Record<string, FileObj>,
   {
-    'package.json': FileObj_['PackageJson']
-    '.gitignore': FileObj_['Text']
-    'src/index.ts': FileObj_['Text']
-    'tsconfig.json': FileObj_['Text']
-    'tsconfig.settings.json': FileObj_['Text']
-    'tsconfig.build.json': FileObj_['Text']
+    'package.json': FileObjects['PackageJson']
+    '.gitignore': FileObjects['Text']
+    'src/index.ts': FileObjects['Text']
+    'tsconfig.json': FileObjects['Text']
+    'tsconfig.settings.json': FileObjects['Text']
+    'tsconfig.build.json': FileObjects['Text']
   }
 >
 
@@ -36,30 +37,16 @@ type Env = {
   files: InFiles
 }
 
-type Effect<A> = (env: Env) => Effect_<A>
-
-type Effect_<A> = TE.TaskEither<string, A>
-
-const rootDir = path.join(__dirname, '../../')
-
-const assetsDir = path.join(rootDir, 'assets/skeleton')
+type Effect<A> = (env: Env) => TaskEither<string, A>
 
 // -----------------------------------------------------------------------------
-// util
+// effect
 // -----------------------------------------------------------------------------
 
-const splitLines = call('split', '\n')
-
-// -----------------------------------------------------------------------------
-// Effect
-// -----------------------------------------------------------------------------
-
-const devDependencies: Effect<PackageJson['devDependencies']> = RTE.scope(() =>
-  RTE.of({
-    typescript: '^4.2.3',
-    'fp-ts': '^2.9.5',
-  })
-)
+const devDependencies: Effect<PackageJson['devDependencies']> = RTE.of({
+  typescript: '^4.2.3',
+  'fp-ts': '^2.9.5',
+})
 
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(
   ({ config: { packageManager } }) =>
@@ -74,29 +61,32 @@ const peerDependencies: Effect<PackageJson['peerDependencies']> = RTE.of({
   'fp-ts': '^2.9.5',
 })
 
-const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(({ config }) =>
-  pipe(
-    {
-      name: RTE.of(config.name),
-      homepage: RTE.of(config.homepage),
-      version: RTE.of(config.projectVersion),
-      main: RTE.of('dist/index.js'),
-      license: RTE.of(config.license),
-      peerDependencies: peerDependencies,
-      dependencies: RTE.of({}),
-      devDependencies: devDependencies,
-      scripts: scripts,
-    },
-    sequenceS(RTE.ApplyPar),
-    RTE.map(tag('PackageJson'))
-  )
+const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
+  ({ config }) =>
+    pipe(
+      {
+        name: RTE.of(config.name),
+        homepage: RTE.of(config.homepage),
+        version: RTE.of(config.projectVersion),
+        main: RTE.of('dist/index.js'),
+        license: RTE.of(config.license),
+        peerDependencies: peerDependencies,
+        dependencies: RTE.of({}),
+        devDependencies: devDependencies,
+        scripts: scripts,
+      },
+      sequenceS(RTE.ApplyPar),
+      RTE.map(tag('PackageJson'))
+    )
 )
 
-const gitIgnore: Effect<FileObj_['Text']> = RTE.scope(() =>
-  pipe(['node_modules/', 'dist/', 'yarn-error.log'], tag('Text'), RTE.of)
+const gitIgnore: Effect<FileObjects['Text']> = pipe(
+  ['node_modules/', 'dist/', 'yarn-error.log'],
+  tag('Text'),
+  RTE.of
 )
 
-const indexTs: Effect<FileObj_['Text']> = RTE.scope(({ config, cap }) =>
+const indexTs: Effect<FileObjects['Text']> = RTE.scope(({ config, cap }) =>
   pipe(
     path.join(assetsDir, 'src/index.ts'),
     cap.readFile,
@@ -106,7 +96,7 @@ const indexTs: Effect<FileObj_['Text']> = RTE.scope(({ config, cap }) =>
   )
 )
 
-const tsConfig: Effect<FileObj_['Text']> = scope(({ cap }) =>
+const tsConfig: Effect<FileObjects['Text']> = scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.json'),
     cap.readFile,
@@ -115,7 +105,7 @@ const tsConfig: Effect<FileObj_['Text']> = scope(({ cap }) =>
   )
 )
 
-const tsConfigBuild: Effect<FileObj_['Text']> = scope(({ cap }) =>
+const tsConfigBuild: Effect<FileObjects['Text']> = scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.build.json'),
     cap.readFile,
@@ -124,7 +114,7 @@ const tsConfigBuild: Effect<FileObj_['Text']> = scope(({ cap }) =>
   )
 )
 
-const tsConfigSettings: Effect<FileObj_['Text']> = scope(({ cap }) =>
+const tsConfigSettings: Effect<FileObjects['Text']> = scope(({ cap }) =>
   pipe(
     path.join(assetsDir, 'tsconfig.settings.json'),
     cap.readFile,
@@ -133,18 +123,16 @@ const tsConfigSettings: Effect<FileObj_['Text']> = scope(({ cap }) =>
   )
 )
 
-const main: Effect<OutFiles> = RTE.scope(() =>
-  pipe(
-    {
-      'package.json': packageJson,
-      '.gitignore': gitIgnore,
-      'src/index.ts': indexTs,
-      'tsconfig.json': tsConfig,
-      'tsconfig.settings.json': tsConfigSettings,
-      'tsconfig.build.json': tsConfigBuild,
-    },
-    sequenceS(RTE.ApplyPar)
-  )
+const main: Effect<OutFiles> = pipe(
+  {
+    'package.json': packageJson,
+    '.gitignore': gitIgnore,
+    'src/index.ts': indexTs,
+    'tsconfig.json': tsConfig,
+    'tsconfig.settings.json': tsConfigSettings,
+    'tsconfig.build.json': tsConfigBuild,
+  },
+  sequenceS(RTE.ApplyPar)
 )
 
 // -----------------------------------------------------------------------------
