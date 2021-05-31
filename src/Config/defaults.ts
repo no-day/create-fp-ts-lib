@@ -4,6 +4,7 @@ export const defaults: Config = {
   noQuest: false,
   inPlace: false,
   name: 'fp-ts-lib',
+  packageManager: 'yarn',
   homepage: 'http://',
   projectVersion: '1.0.0',
   license: 'MIT',

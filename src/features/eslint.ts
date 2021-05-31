@@ -64,11 +64,14 @@ const dependencies: Effect<PackageJson['dependencies']> = pipe(
   RTE.of
 )
 
-const scripts: Effect<PackageJson['scripts']> = pipe(
-  {
-    lint: 'yarn eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0',
-  },
-  RTE.of
+const scripts: Effect<PackageJson['scripts']> = RTE.scope(
+  ({ config: { packageManager } }) =>
+    pipe(
+      {
+        lint: `${packageManager} run eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0`,
+      },
+      RTE.of
+    )
 )
 
 const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(

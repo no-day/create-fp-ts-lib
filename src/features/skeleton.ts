@@ -61,12 +61,13 @@ const devDependencies: Effect<PackageJson['devDependencies']> = RTE.scope(() =>
   })
 )
 
-const scripts: Effect<PackageJson['scripts']> = RTE.scope(() =>
-  RTE.of({
-    build: 'tsc -p tsconfig.build.json',
-    'build:watch': 'tsc -w -p tsconfig.build.json',
-    prepublish: 'yarn build',
-  })
+const scripts: Effect<PackageJson['scripts']> = RTE.scope(
+  ({ config: { packageManager } }) =>
+    RTE.of({
+      build: 'tsc -p tsconfig.build.json',
+      'build:watch': 'tsc -w -p tsconfig.build.json',
+      prepublish: `${packageManager} run build`,
+    })
 )
 
 const peerDependencies: Effect<PackageJson['peerDependencies']> = RTE.of({

@@ -1,7 +1,7 @@
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import { Task } from 'fp-ts/lib/Task'
-import { Config } from './type'
+import { Config, PackageManager } from './type'
 import { defaults } from './defaults'
 import { descriptions } from '../Config/descriptions'
 
@@ -14,6 +14,8 @@ const excludePromise = <T>(args: T) => {
   return Promise.resolve(args as EliminatePromise<typeof args>)
 }
 
+const packageManagers: ReadonlyArray<PackageManager> = ['npm', 'yarn']
+
 // -----------------------------------------------------------------------------
 // main
 // -----------------------------------------------------------------------------
@@ -23,7 +25,7 @@ const groups = {
   features: 'Features:',
 }
 
-const getCliOpts: Task<Config> = () =>
+const getCliOpts = () =>
   excludePromise(
     yargs(hideBin(process.argv))
       // Group: Options
@@ -38,6 +40,11 @@ const getCliOpts: Task<Config> = () =>
         default: defaults.inPlace,
         boolean: true,
         description: descriptions.inPlace,
+      })
+      .option('packageManager', {
+        default: defaults.packageManager,
+        choices: packageManagers,
+        description: descriptions.packageManager,
       })
 
       // Group: Meta

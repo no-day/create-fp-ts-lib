@@ -50,11 +50,14 @@ const dependencies: Effect<PackageJson['dependencies']> = pipe(
   RTE.of
 )
 
-const scripts: Effect<PackageJson['scripts']> = pipe(
-  {
-    pretty: 'yarn prettier --check .',
-  },
-  RTE.of
+const scripts: Effect<PackageJson['scripts']> = RTE.scope(
+  ({ config: { packageManager } }) =>
+    pipe(
+      {
+        pretty: `${packageManager} run prettier --check .`,
+      },
+      RTE.of
+    )
 )
 
 const packageJson: Effect<FileObj_['PackageJson']> = RTE.scope(

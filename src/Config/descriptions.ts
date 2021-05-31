@@ -4,6 +4,7 @@ export const descriptions: { [key in keyof Config]: string } = {
   noQuest: "Don't ask questions",
   inPlace: 'Use current directory',
   name: 'Project name',
+  packageManager: "Your project's package manager",
   homepage: 'Project homepage URL',
   projectVersion: 'Project version',
   license: 'Project license',

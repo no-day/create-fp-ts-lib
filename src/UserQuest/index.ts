@@ -5,7 +5,7 @@ import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
 import { descriptions } from '../Config/descriptions'
 import { defaults } from '../Config/defaults'
-import { Config } from '../Config/type'
+import { Config, PackageManager } from '../Config/type'
 
 // -----------------------------------------------------------------------------
 // Effect
@@ -23,6 +23,19 @@ const getName: Effect<string> = RTE.scope(({ config: { name } }) =>
     initial: name,
     message: descriptions.name,
   })
+)
+
+const getPackageManager: Effect<PackageManager> = RTE.scope(
+  ({ config: { name } }) =>
+    prompts({
+      type: 'select',
+      initial: 0,
+      message: descriptions.name,
+      choices: [
+        { title: 'Yarn', value: 'yarn' as const },
+        { title: 'NPM', value: 'npm' as const },
+      ],
+    })
 )
 
 const getInPlace: Effect<boolean> = RTE.scope(({ config: { inPlace } }) =>
@@ -98,6 +111,7 @@ const getQuest: Effect<UserQuest> = pipe(
   RTE.bind('homepage', () => getHomepage),
   RTE.bind('projectVersion', () => getProjectVersion),
   RTE.bind('license', () => getLicense),
+  RTE.bind('packageManager', () => getPackageManager),
   RTE.bind('prettier', () => getPrettier),
   RTE.bind('eslint', () => getEsLint),
   RTE.bind('jest', () => RTE.of(true)),
