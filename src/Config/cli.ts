@@ -2,8 +2,8 @@ import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import { Task } from 'fp-ts/lib/Task'
 import { Config } from './type'
-import { defaults } from '../UserQuest/defaults'
-import { descriptions } from '../UserQuest/descriptions'
+import { defaults } from './defaults'
+import { descriptions } from '../Config/descriptions'
 
 // -----------------------------------------------------------------------------
 // util
@@ -29,15 +29,15 @@ const getCliOpts: Task<Config> = () =>
       // Group: Options
       .option('noQuest', {
         alias: 'q',
-        default: false,
+        default: defaults.noQuest,
         boolean: true,
-        description: "Don't ask questions",
+        description: descriptions.noQuest,
       })
       .option('inPlace', {
         alias: 'u',
-        default: false,
+        default: defaults.inPlace,
         boolean: true,
-        description: 'Use current directory',
+        description: descriptions.inPlace,
       })
 
       // Group: Meta

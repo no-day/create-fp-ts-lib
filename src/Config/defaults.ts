@@ -1,6 +1,8 @@
-import { UserQuest } from './type'
+import { Config } from './type'
 
-export const defaults: UserQuest = {
+export const defaults: Config = {
+  noQuest: false,
+  inPlace: false,
   name: 'fp-ts-lib',
   homepage: 'http://',
   projectVersion: '1.0.0',

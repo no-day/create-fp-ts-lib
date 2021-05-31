@@ -3,8 +3,8 @@ import { prompts as prompts_ } from '../prompts'
 import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
-import { descriptions } from './descriptions'
-import { defaults } from './defaults'
+import { descriptions } from '../Config/descriptions'
+import { defaults } from '../Config/defaults'
 import { Config } from '../Config/type'
 
 // -----------------------------------------------------------------------------
@@ -22,6 +22,16 @@ const getName: Effect<string> = RTE.scope(({ config: { name } }) =>
     type: 'text',
     initial: name,
     message: descriptions.name,
+  })
+)
+
+const getInPlace: Effect<boolean> = RTE.scope(({ config: { inPlace } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.inPlace,
+    initial: inPlace,
+    active: 'yes',
+    inactive: 'no',
   })
 )
 
@@ -84,6 +94,7 @@ const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
 const getQuest: Effect<UserQuest> = pipe(
   RTE.Do,
   RTE.bind('name', () => getName),
+  RTE.bind('inPlace', () => getInPlace),
   RTE.bind('homepage', () => getHomepage),
   RTE.bind('projectVersion', () => getProjectVersion),
   RTE.bind('license', () => getLicense),

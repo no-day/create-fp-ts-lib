@@ -1,6 +1,8 @@
-import { UserQuest } from './type'
+import { Config } from './type'
 
-export const descriptions: { [key in keyof UserQuest]: string } = {
+export const descriptions: { [key in keyof Config]: string } = {
+  noQuest: "Don't ask questions",
+  inPlace: 'Use current directory',
   name: 'Project name',
   homepage: 'Project homepage URL',
   projectVersion: 'Project version',

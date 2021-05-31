@@ -50,8 +50,9 @@ const eslintConfig: Linter.Config = {
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   rules: {},
 }
+
 // -----------------------------------------------------------------------------
-// Effect
+// effect
 // -----------------------------------------------------------------------------
 
 const dependencies: Effect<PackageJson['dependencies']> = pipe(
