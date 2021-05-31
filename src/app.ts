@@ -1,9 +1,6 @@
 import { pipe } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
-import featureSkeleton from './features/skeleton'
-import featurePrettier from './features/prettier'
-import featureEsLint from './features/eslint'
-import featureJest from './features/jest'
+import * as features from './features'
 import { FileSystem } from './FileSystem'
 import * as FS from './FileSystem'
 import { Capabilities, capabilities } from './Capabilities'
@@ -41,21 +38,26 @@ const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
   pipe(
     TE.of({}),
     TE.chain((files) =>
-      pipe(featureSkeleton({ cap, config, files }), TE.map(merge(files)))
+      pipe(features.skeleton({ cap, config, files }), TE.map(merge(files)))
     ),
     TE.chain((files) =>
       config.prettier
-        ? pipe(featurePrettier({ cap, config, files }), TE.map(merge(files)))
+        ? pipe(features.prettier({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
     ),
     TE.chain((files) =>
       config.eslint
-        ? pipe(featureEsLint({ cap, config, files }), TE.map(merge(files)))
+        ? pipe(features.esLint({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
     ),
     TE.chain((files) =>
-      config.eslint
-        ? pipe(featureJest({ cap, config, files }), TE.map(merge(files)))
+      config.jest
+        ? pipe(features.jest({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
+    ),
+    TE.chain((files) =>
+      config.docsTs
+        ? pipe(features.docsTs({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
     )
   )

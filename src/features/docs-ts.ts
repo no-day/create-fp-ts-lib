@@ -7,12 +7,7 @@ import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
-import { Json } from '../Json'
-import { Linter } from 'eslint'
 import { PackageJson } from '../PackageJson'
-import * as path from 'path'
-import { assetsDirRoot } from '../assets-dir'
-import { splitLines } from '../split-lines'
 
 // -----------------------------------------------------------------------------
 // types
@@ -39,32 +34,21 @@ type OutFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
-    'jest.config.js': FileObjects['Text']
-    'tests/index.ts': FileObjects['Text']
   }
 >
-
-// -----------------------------------------------------------------------------
-// constant
-// -----------------------------------------------------------------------------
-
-const assetsDir = path.join(assetsDirRoot, 'jest')
 
 // -----------------------------------------------------------------------------
 // effect
 // -----------------------------------------------------------------------------
 
 const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  '@types/jest': '^26.0.20',
-  jest: '^26.6.3',
-  'ts-jest': '^26.5.3',
+  'docs-ts': '^0.6.5',
 })
 
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(
   ({ config: { packageManager } }) =>
     RTE.of({
-      test: `${packageManager} run jest`,
-      'test:watch': `${packageManager} run jest --watch`,
+      docs: `${packageManager} run docs-ts`,
     })
 )
 
@@ -88,29 +72,9 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     )
 )
 
-const jestConfigJs: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
-  pipe(
-    path.join(assetsDir, 'jest.config.js'),
-    cap.readFile,
-    RTE.map(splitLines),
-    RTE.map(tag('Text'))
-  )
-)
-
-const indexTs: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
-  pipe(
-    path.join(assetsDir, 'tests/index.ts'),
-    cap.readFile,
-    RTE.map(splitLines),
-    RTE.map(tag('Text'))
-  )
-)
-
 const main: Effect<OutFiles> = pipe(
   {
     'package.json': packageJson,
-    'jest.config.js': jestConfigJs,
-    'tests/index.ts': indexTs,
   },
   sequenceS(RTE.ApplySeq)
 )
