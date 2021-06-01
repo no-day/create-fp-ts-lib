@@ -18,8 +18,7 @@
   - [Commands](#commands)
   - [Serve docs on GitHub pages](#serve-docs-on-github-pages)
   - [Publish to NPM](#publish-to-npm)
-- [Limitations](#limitations)
-<!-- AUTO-GENERATED-CONTENT:END -->
+  <!-- AUTO-GENERATED-CONTENT:END -->
 
 ## Getting started
 

@@ -25,6 +25,7 @@
     "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
+    "cspell": "^5.5.2",
     "eslint": "^7.27.0",
     "fast-check": "^2.13.0",
     "fp-ts": "^2.10.5",
@@ -47,6 +48,7 @@
     "docs-preview:watch": "cd docs; bundle exec jekyll serve --livereload",
     "docs-preview": "cd docs; bundle exec jekyll serve",
     "lint": "yarn eslint src tests --ext .js,.jsx,.ts,.tsx",
+    "spell": "yarn cspell '**/*.*'",
     "ci": "yarn build & yarn test & yarn lint & yarn e2e-test"
   }
 }

@@ -1,7 +1,7 @@
-import * as mylib from '../src'
+import * as myLib from '../src'
 
 describe('greet', () => {
   it('greets the world', () => {
-    expect(mylib.greet('World')).toBe(`Hello, World!`)
+    expect(myLib.greet('World')).toBe(`Hello, World!`)
   })
 })
