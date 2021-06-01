@@ -16,3 +16,4 @@ yarn run build
 yarn run lint
 yarn run test
 yarn run docs-ts
+yarn run md

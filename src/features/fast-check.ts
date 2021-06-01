@@ -8,6 +8,9 @@ import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { PackageJson } from '../PackageJson'
+import * as path from 'path'
+import { assetsDirRoot } from '../assets-dir'
+import { splitLines } from '../split-lines'
 
 // -----------------------------------------------------------------------------
 // types
@@ -27,6 +30,7 @@ type InFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
+    'tests/index.ts'?: FileObjects['Text']
   }
 >
 
@@ -34,8 +38,15 @@ type OutFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
+    'tests/index.ts'?: FileObjects['Text']
   }
 >
+
+// -----------------------------------------------------------------------------
+// constant
+// -----------------------------------------------------------------------------
+
+const assetsDir = path.join(assetsDirRoot, 'fast-check')
 
 // -----------------------------------------------------------------------------
 // effect
@@ -64,8 +75,24 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     )
 )
 
+const indexTs: Effect<
+  undefined | FileObjects['Text']
+> = RTE.scope(({ cap, config }) =>
+  config.jest
+    ? pipe(
+        path.join(assetsDir, 'tests/index.ts'),
+        cap.readFile,
+        RTE.map(splitLines),
+        RTE.map(tag('Text'))
+      )
+    : RTE.of(undefined)
+)
+
 const main: Effect<OutFiles> = pipe(
-  { 'package.json': packageJson },
+  {
+    'package.json': packageJson,
+    'tests/index.ts': indexTs,
+  },
   sequenceS(RTE.ApplySeq)
 )
 
