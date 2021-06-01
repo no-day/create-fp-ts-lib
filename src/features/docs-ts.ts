@@ -27,6 +27,7 @@ type InFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
+    '.gitignore': FileObjects['Text']
   }
 >
 
@@ -34,6 +35,7 @@ type OutFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
+    '.gitignore': FileObjects['Text']
   }
 >
 
@@ -72,9 +74,23 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     )
 )
 
+const gitignore: Effect<FileObjects['Text']> = RTE.scope(
+  ({
+    files: {
+      '.gitignore': { data },
+    },
+  }) =>
+    pipe(
+      [...data, 'docs/modules/*.ts.md', 'docs/_site'],
+      RTE.of,
+      RTE.map(tag('Text'))
+    )
+)
+
 const main: Effect<OutFiles> = pipe(
   {
     'package.json': packageJson,
+    '.gitignore': gitignore,
   },
   sequenceS(RTE.ApplySeq)
 )
