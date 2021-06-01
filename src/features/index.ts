@@ -3,5 +3,6 @@ import prettier from './prettier'
 import esLint from './eslint'
 import jest from './jest'
 import docsTs from './docs-ts'
+import fastCheck from './docs-ts'
 
-export { skeleton, prettier, esLint, jest, docsTs }
+export { skeleton, prettier, esLint, jest, docsTs, fastCheck }

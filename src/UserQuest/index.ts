@@ -5,7 +5,6 @@ import { constVoid, flow, pipe } from 'fp-ts/lib/function'
 import { log } from 'fp-ts/lib/Console'
 import { UserQuest } from './type'
 import { descriptions } from '../Config/descriptions'
-import { defaults } from '../Config/defaults'
 import { Config, PackageManager } from '../Config/type'
 
 // -----------------------------------------------------------------------------
