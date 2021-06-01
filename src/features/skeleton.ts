@@ -27,6 +27,7 @@ type OutFiles = Extends<
     'tsconfig.json': FileObjects['Text']
     'tsconfig.settings.json': FileObjects['Text']
     'tsconfig.build.json': FileObjects['Text']
+    'README.md': FileObjects['Text']
   }
 >
 
@@ -130,6 +131,16 @@ const tsConfigSettings: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>
   )
 )
 
+const readme: Effect<FileObjects['Text']> = RTE.scope(({ cap, config }) =>
+  pipe(
+    path.join(assetsDir, 'README.md'),
+    cap.readFile,
+    RTE.map((x) => Mustache.render(x, config)),
+    RTE.map(splitLines),
+    RTE.map(tag('Text'))
+  )
+)
+
 const main: Effect<OutFiles> = pipe(
   {
     'package.json': packageJson,
@@ -138,6 +149,7 @@ const main: Effect<OutFiles> = pipe(
     'tsconfig.json': tsConfig,
     'tsconfig.settings.json': tsConfigSettings,
     'tsconfig.build.json': tsConfigBuild,
+    'README.md': readme,
   },
   sequenceS(RTE.ApplyPar)
 )

@@ -66,6 +66,15 @@ const getHomepage: Effect<string> = RTE.scope(({ config: { homepage } }) =>
   })
 )
 
+const getHomepageAPI: Effect<string> = RTE.scope(
+  ({ config: { homepageAPI } }) =>
+    prompts({
+      type: 'text',
+      message: descriptions.homepageAPI,
+      initial: homepageAPI,
+    })
+)
+
 const getProjectVersion: Effect<string> = RTE.scope(
   ({ config: { projectVersion } }) =>
     prompts({
@@ -159,6 +168,7 @@ const main: Effect<UserQuest> = pipe(
   RTE.bind('name', () => getName),
   RTE.bind('inPlace', () => getInPlace),
   RTE.bind('homepage', () => getHomepage),
+  RTE.bind('homepageAPI', () => getHomepageAPI),
   RTE.bind('projectVersion', () => getProjectVersion),
   RTE.bind('license', () => getLicense),
   RTE.bind('packageManager', () => getPackageManager),

@@ -6,6 +6,7 @@ export const defaults: Config = {
   name: 'fp-ts-lib',
   packageManager: 'yarn',
   homepage: 'http://',
+  homepageAPI: 'http://',
   projectVersion: '1.0.0',
   license: 'MIT',
   prettier: true,

@@ -4,6 +4,7 @@ export type Config = {
   name: string
   packageManager: PackageManager
   homepage: string
+  homepageAPI: string
   projectVersion: string
   license: string
   prettier: boolean

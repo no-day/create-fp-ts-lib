@@ -66,6 +66,12 @@ const getCliOpts: Task<Config> = () =>
         group: groups.meta,
         description: descriptions.homepage,
       })
+      .option('homepageAPI', {
+        default: defaults.homepageAPI,
+        type: 'string',
+        group: groups.meta,
+        description: descriptions.homepageAPI,
+      })
       .option('projectVersion', {
         alias: 'v',
         default: defaults.projectVersion,

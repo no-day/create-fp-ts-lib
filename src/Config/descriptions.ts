@@ -6,6 +6,7 @@ export const descriptions: { [key in keyof Config]: string } = {
   name: 'Project name',
   packageManager: "Your project's package manager",
   homepage: 'Project homepage URL',
+  homepageAPI: `Project's API homepage URL`,
   projectVersion: 'Project version',
   license: 'Project license',
   prettier: 'Use prettier',
