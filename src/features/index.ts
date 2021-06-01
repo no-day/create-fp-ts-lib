@@ -3,6 +3,7 @@ import prettier from './prettier'
 import esLint from './eslint'
 import jest from './jest'
 import docsTs from './docs-ts'
-import fastCheck from './docs-ts'
+import fastCheck from './fast-check'
+import ghActions from './gh-actions'
 
-export { skeleton, prettier, esLint, jest, docsTs, fastCheck }
+export { skeleton, prettier, esLint, jest, docsTs, fastCheck, ghActions }

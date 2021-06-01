@@ -112,6 +112,36 @@ const getJest: Effect<boolean> = RTE.scope(({ config: { jest } }) =>
   })
 )
 
+const getFastCheck: Effect<boolean> = RTE.scope(({ config: { fastCheck } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.fastCheck,
+    initial: fastCheck,
+    active: 'yes',
+    inactive: 'no',
+  })
+)
+
+const getDocsTs: Effect<boolean> = RTE.scope(({ config: { docsTs } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.docsTs,
+    initial: docsTs,
+    active: 'yes',
+    inactive: 'no',
+  })
+)
+
+const getGhActions: Effect<boolean> = RTE.scope(({ config: { ghActions } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.ghActions,
+    initial: ghActions,
+    active: 'yes',
+    inactive: 'no',
+  })
+)
+
 const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
   pipe(
     prompts({
@@ -135,9 +165,9 @@ const main: Effect<UserQuest> = pipe(
   RTE.bind('prettier', () => getPrettier),
   RTE.bind('eslint', () => getEsLint),
   RTE.bind('jest', () => getJest),
-  RTE.bind('fastCheck', () => RTE.of(true)),
-  RTE.bind('docsTs', () => RTE.of(true)),
-  RTE.bind('ghActions', () => RTE.of(true)),
+  RTE.bind('fastCheck', () => getFastCheck),
+  RTE.bind('docsTs', () => getDocsTs),
+  RTE.bind('ghActions', () => getGhActions),
   RTE.bind('vscode', () => RTE.of(true)),
   RTE.bind('markdownMagic', () => RTE.of(true)),
   RTE.chainFirst(() => RTE.fromIO(log(''))),

@@ -56,13 +56,18 @@ const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
         : TE.of(files)
     ),
     TE.chain((files) =>
+      config.fastCheck
+        ? pipe(features.fastCheck({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
+    ),
+    TE.chain((files) =>
       config.docsTs
         ? pipe(features.docsTs({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
     ),
     TE.chain((files) =>
-      config.fastCheck
-        ? pipe(features.fastCheck({ cap, config, files }), TE.map(merge(files)))
+      config.ghActions
+        ? pipe(features.ghActions({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
     )
   )

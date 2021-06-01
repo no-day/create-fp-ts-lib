@@ -18,6 +18,7 @@
     "@types/yargs": "^17.0.0",
     "mustache": "^4.2.0",
     "prompts": "^2.4.1",
+    "yaml": "^1.10.2",
     "yargs": "^17.0.1"
   },
   "devDependencies": {
