@@ -30,12 +30,38 @@ export default (config: Config): Json => ({
             'node-version': '${{ matrix.node-version }}',
           },
         },
-        { run: 'yarn install' },
-        { run: 'yarn build' },
+        { run: `${config.packageManager} install` },
+        { run: `${config.packageManager} run build` },
         ...(config.jest ? [{ run: `${config.packageManager} run test` }] : []),
         ...(config.eslint
           ? [{ run: `${config.packageManager} run lint` }]
           : []),
+      ],
+    },
+    'deploy-docs': {
+      needs: ['build'],
+      'runs-on': 'ubuntu-latest',
+      steps: [
+        {
+          name: 'Checkout',
+          uses: 'actions/checkout@v2.3.1',
+        },
+        {
+          name: 'Install',
+          run: `${config.packageManager} install`,
+        },
+        {
+          name: 'Generate docs',
+          run: `${config.packageManager} run docs`,
+        },
+        {
+          name: 'Deploy',
+          uses: 'JamesIves/github-pages-deploy-action@4.0.0',
+          with: {
+            branch: 'gh-pages',
+            folder: 'docs',
+          },
+        },
       ],
     },
   },

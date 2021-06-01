@@ -47,6 +47,7 @@ type OutFiles = Extends<
 
 const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
   prettier: '^2.2.1',
+  'prettier-plugin-jsdoc': '^0.3.13',
 })
 
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(
