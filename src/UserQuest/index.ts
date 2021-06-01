@@ -151,6 +151,27 @@ const getGhActions: Effect<boolean> = RTE.scope(({ config: { ghActions } }) =>
   })
 )
 
+const getMarkdownMagic: Effect<boolean> = RTE.scope(
+  ({ config: { markdownMagic } }) =>
+    prompts({
+      type: 'toggle',
+      message: descriptions.markdownMagic,
+      initial: markdownMagic,
+      active: 'yes',
+      inactive: 'no',
+    })
+)
+
+const getVscode: Effect<boolean> = RTE.scope(({ config: { vscode } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.vscode,
+    initial: vscode,
+    active: 'yes',
+    inactive: 'no',
+  })
+)
+
 const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
   pipe(
     prompts({
@@ -178,8 +199,8 @@ const main: Effect<UserQuest> = pipe(
   RTE.bind('fastCheck', () => getFastCheck),
   RTE.bind('docsTs', () => getDocsTs),
   RTE.bind('ghActions', () => getGhActions),
-  RTE.bind('vscode', () => RTE.of(true)),
-  RTE.bind('markdownMagic', () => RTE.of(true)),
+  RTE.bind('vscode', () => getVscode),
+  RTE.bind('markdownMagic', () => getMarkdownMagic),
   RTE.chainFirst(() => RTE.fromIO(log(''))),
   RTE.chainFirst(({ name }) => confirm({ name }))
 )
