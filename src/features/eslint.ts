@@ -9,7 +9,6 @@ import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { Json } from '../Json'
 import { Linter } from 'eslint'
-import { PackageJson } from '../PackageJson'
 
 // -----------------------------------------------------------------------------
 // types
@@ -42,7 +41,7 @@ type OutFiles = Extends<
 >
 
 // -----------------------------------------------------------------------------
-// constants
+// utils
 // -----------------------------------------------------------------------------
 
 const eslintConfig: Linter.Config = {
@@ -54,38 +53,31 @@ const eslintConfig: Linter.Config = {
   rules: {},
 }
 
+const mkPackageJson = (config: Config): Json => ({
+  devDependencies: {
+    eslint: '^7.27.0',
+    '@typescript-eslint/eslint-plugin': '^4.25.0',
+    '@typescript-eslint/parser': '^4.25.0',
+  },
+  scripts: {
+    lint: `${config.packageManager} run eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0`,
+  },
+})
+
 // -----------------------------------------------------------------------------
 // effect
 // -----------------------------------------------------------------------------
-
-const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  eslint: '^7.27.0',
-  '@typescript-eslint/eslint-plugin': '^4.25.0',
-  '@typescript-eslint/parser': '^4.25.0',
-})
-
-const scripts: Effect<PackageJson['scripts']> = RTE.scope(
-  ({ config: { packageManager } }) =>
-    RTE.of({
-      lint: `${packageManager} run eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0`,
-    })
-)
 
 const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
   ({
     files: {
       'package.json': { data },
     },
+    config,
   }) =>
     pipe(
-      {
-        devDependencies: pipe(
-          devDependencies,
-          RTE.map(merge(data.devDependencies))
-        ),
-        scripts: pipe(scripts, RTE.map(merge(data.scripts))),
-      },
-      sequenceS(RTE.ApplySeq),
+      mkPackageJson(config),
+      RTE.of,
       RTE.map(merge(data)),
       RTE.map(tag('PackageJson'))
     )

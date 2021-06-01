@@ -15,6 +15,7 @@ export type Config = {
   ghActions: boolean
   vscode: boolean
   markdownMagic: boolean
+  cspell: boolean
 }
 
 export type PackageManager = 'yarn' | 'npm'

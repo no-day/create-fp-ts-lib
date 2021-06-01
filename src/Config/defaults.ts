@@ -17,4 +17,5 @@ export const defaults: Config = {
   ghActions: true,
   vscode: true,
   markdownMagic: true,
+  cspell: true,
 }

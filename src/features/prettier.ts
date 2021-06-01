@@ -9,7 +9,6 @@ import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { prettierConfig } from '../prettier-config'
 import { Json } from '../Json'
-import { PackageJson } from '../PackageJson'
 
 // -----------------------------------------------------------------------------
 // types
@@ -42,36 +41,33 @@ type OutFiles = Extends<
 >
 
 // -----------------------------------------------------------------------------
-// effect
+// utils
 // -----------------------------------------------------------------------------
 
-const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  prettier: '^2.2.1',
-  'prettier-plugin-jsdoc': '^0.3.13',
+const mkPackageJson = (config: Config): Json => ({
+  devDependencies: {
+    prettier: '^2.2.1',
+    'prettier-plugin-jsdoc': '^0.3.13',
+  },
+  scripts: {
+    pretty: `${config.packageManager} run prettier --check .`,
+  },
 })
 
-const scripts: Effect<PackageJson['scripts']> = RTE.scope(
-  ({ config: { packageManager } }) =>
-    RTE.of({
-      pretty: `${packageManager} run prettier --check .`,
-    })
-)
+// -----------------------------------------------------------------------------
+// effect
+// -----------------------------------------------------------------------------
 
 const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
   ({
     files: {
       'package.json': { data },
     },
+    config,
   }) =>
     pipe(
-      {
-        devDependencies: pipe(
-          devDependencies,
-          RTE.map(merge(data.devDependencies))
-        ),
-        scripts: pipe(scripts, RTE.map(merge(data.scripts))),
-      },
-      sequenceS(RTE.ApplySeq),
+      mkPackageJson(config),
+      RTE.of,
       RTE.map(merge(data)),
       RTE.map(tag('PackageJson'))
     )

@@ -172,6 +172,16 @@ const getVscode: Effect<boolean> = RTE.scope(({ config: { vscode } }) =>
   })
 )
 
+const getCspell: Effect<boolean> = RTE.scope(({ config: { cspell } }) =>
+  prompts({
+    type: 'toggle',
+    message: descriptions.cspell,
+    initial: cspell,
+    active: 'yes',
+    inactive: 'no',
+  })
+)
+
 const confirm: (env: Pick<UserQuest, 'name'>) => Effect<void> = ({ name }) =>
   pipe(
     prompts({
@@ -201,6 +211,7 @@ const main: Effect<UserQuest> = pipe(
   RTE.bind('ghActions', () => getGhActions),
   RTE.bind('vscode', () => getVscode),
   RTE.bind('markdownMagic', () => getMarkdownMagic),
+  RTE.bind('cspell', () => getCspell),
   RTE.chainFirst(() => RTE.fromIO(log(''))),
   RTE.chainFirst(({ name }) => confirm({ name }))
 )

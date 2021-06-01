@@ -7,10 +7,10 @@ import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
-import { PackageJson } from '../PackageJson'
 import * as path from 'path'
 import { assetsDirRoot } from '../assets-dir'
 import { splitLines } from '../split-lines'
+import { Json } from '../Json'
 
 // -----------------------------------------------------------------------------
 // types
@@ -49,38 +49,35 @@ type OutFiles = Extends<
 const assetsDir = path.join(assetsDirRoot, 'jest')
 
 // -----------------------------------------------------------------------------
-// effect
+// utils
 // -----------------------------------------------------------------------------
 
-const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  '@types/jest': '^26.0.20',
-  jest: '^26.6.3',
-  'ts-jest': '^26.5.3',
+const mkPackageJson = (config: Config): Json => ({
+  devDependencies: {
+    '@types/jest': '^26.0.20',
+    jest: '^26.6.3',
+    'ts-jest': '^26.5.3',
+  },
+  scripts: {
+    test: `${config.packageManager} run jest`,
+    'test:watch': `${config.packageManager} run jest --watch`,
+  },
 })
 
-const scripts: Effect<PackageJson['scripts']> = RTE.scope(
-  ({ config: { packageManager } }) =>
-    RTE.of({
-      test: `${packageManager} run jest`,
-      'test:watch': `${packageManager} run jest --watch`,
-    })
-)
+// -----------------------------------------------------------------------------
+// effect
+// -----------------------------------------------------------------------------
 
 const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
   ({
     files: {
       'package.json': { data },
     },
+    config,
   }) =>
     pipe(
-      {
-        devDependencies: pipe(
-          devDependencies,
-          RTE.map(merge(data.devDependencies))
-        ),
-        scripts: pipe(scripts, RTE.map(merge(data.scripts))),
-      },
-      sequenceS(RTE.ApplySeq),
+      mkPackageJson(config),
+      RTE.of,
       RTE.map(merge(data)),
       RTE.map(tag('PackageJson'))
     )

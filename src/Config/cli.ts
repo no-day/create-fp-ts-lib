@@ -134,6 +134,12 @@ const getCliOpts: Task<Config> = () =>
         boolean: true,
         group: groups.features,
         description: descriptions.markdownMagic,
+      })
+      .option('cspell', {
+        default: defaults.cspell,
+        boolean: true,
+        group: groups.features,
+        description: descriptions.cspell,
       }).argv
   )
 

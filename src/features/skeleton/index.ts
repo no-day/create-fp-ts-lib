@@ -1,16 +1,16 @@
-import * as RTE from '../ReaderTaskEither'
+import * as RTE from '../../ReaderTaskEither'
 import * as path from 'path'
 import * as Mustache from 'mustache'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/function'
-import { Extends, tag } from '../type-utils'
-import { FileObj, FileObjects } from '../FileObj'
-import { Capabilities } from '../Capabilities'
-import { Config } from '../Config/type'
-import { PackageJson } from '../PackageJson'
-import { assetsDirRoot } from '../assets-dir'
-import { splitLines } from '../split-lines'
+import { Extends, tag } from '../../type-utils'
+import { FileObj, FileObjects } from '../../FileObj'
+import { Capabilities } from '../../Capabilities'
+import { Config } from '../../Config/type'
+import { assetsDirRoot } from '../../assets-dir'
+import { splitLines } from '../../split-lines'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
+import mkPackageJson from './package-json'
 
 // -----------------------------------------------------------------------------
 // types
@@ -51,41 +51,10 @@ const assetsDir = path.join(assetsDirRoot, 'skeleton')
 // effect
 // -----------------------------------------------------------------------------
 
-const devDependencies: Effect<PackageJson['devDependencies']> = RTE.of({
-  typescript: '^4.2.3',
-  'fp-ts': '^2.9.5',
-})
-
-const scripts: Effect<PackageJson['scripts']> = RTE.scope(
-  ({ config: { packageManager } }) =>
-    RTE.of({
-      build: 'tsc -p tsconfig.build.json',
-      'build:watch': 'tsc -w -p tsconfig.build.json',
-      prepublish: `${packageManager} run build`,
-    })
-)
-
-const peerDependencies: Effect<PackageJson['peerDependencies']> = RTE.of({
-  'fp-ts': '^2.9.5',
-})
-
-const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
-  ({ config }) =>
-    pipe(
-      {
-        name: RTE.of(config.name),
-        homepage: RTE.of(config.homepage),
-        version: RTE.of(config.projectVersion),
-        main: RTE.of('dist/index.js'),
-        license: RTE.of(config.license),
-        peerDependencies: peerDependencies,
-        dependencies: RTE.of({}),
-        devDependencies: devDependencies,
-        scripts: scripts,
-      },
-      sequenceS(RTE.ApplyPar),
-      RTE.map(tag('PackageJson'))
-    )
+const packageJson: Effect<
+  FileObjects['PackageJson']
+> = RTE.scope(({ config }) =>
+  pipe(mkPackageJson(config), RTE.of, RTE.map(tag('PackageJson')))
 )
 
 const gitIgnore: Effect<FileObjects['Text']> = pipe(

@@ -7,6 +7,7 @@ import fastCheck from './fast-check'
 import ghActions from './gh-actions'
 import vscode from './vscode'
 import markdownMagic from './markdown-magic'
+import cspell from './cspell'
 
 export {
   skeleton,
@@ -18,4 +19,5 @@ export {
   ghActions,
   vscode,
   markdownMagic,
+  cspell,
 }

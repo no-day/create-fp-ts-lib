@@ -7,7 +7,7 @@ import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
-import { PackageJson } from '../PackageJson'
+import { Json } from '../Json'
 
 // -----------------------------------------------------------------------------
 // types
@@ -38,35 +38,32 @@ type OutFiles = Extends<
 >
 
 // -----------------------------------------------------------------------------
-// effect
+// utils
 // -----------------------------------------------------------------------------
 
-const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  'markdown-magic': '^2.0.0',
+const mkPackageJson = (config: Config): Json => ({
+  devDependencies: {
+    'markdown-magic': '^2.0.0',
+  },
+  scripts: {
+    md: `${config.packageManager} run markdown`,
+  },
 })
 
-const scripts: Effect<PackageJson['scripts']> = RTE.scope(
-  ({ config: { packageManager } }) =>
-    RTE.of({
-      md: `${packageManager} run markdown`,
-    })
-)
+// -----------------------------------------------------------------------------
+// effect
+// -----------------------------------------------------------------------------
 
 const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
   ({
     files: {
       'package.json': { data },
     },
+    config,
   }) =>
     pipe(
-      {
-        devDependencies: pipe(
-          devDependencies,
-          RTE.map(merge(data.devDependencies))
-        ),
-        scripts: pipe(scripts, RTE.map(merge(data.scripts))),
-      },
-      sequenceS(RTE.ApplySeq),
+      mkPackageJson(config),
+      RTE.of,
       RTE.map(merge(data)),
       RTE.map(tag('PackageJson'))
     )

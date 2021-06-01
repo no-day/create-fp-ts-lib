@@ -76,6 +76,11 @@ const generateFiles: (_1: {
         : TE.of(files)
     ),
     TE.chain((files) =>
+      config.cspell
+        ? pipe(features.cspell({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
+    ),
+    TE.chain((files) =>
       config.markdownMagic
         ? pipe(
             features.markdownMagic({ cap, config, files }),

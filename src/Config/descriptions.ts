@@ -17,4 +17,5 @@ export const descriptions: { [key in keyof Config]: string } = {
   ghActions: 'Use GitHub actions',
   vscode: 'Use vscode tasks',
   markdownMagic: 'Use markdown-magic',
+  cspell: 'Use code spell checking',
 }

@@ -7,9 +7,7 @@ import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
-import * as path from 'path'
-import { assetsDirRoot } from '../assets-dir'
-import { splitLines } from '../split-lines'
+import { Json } from '../Json'
 
 // -----------------------------------------------------------------------------
 // types
@@ -29,7 +27,6 @@ type InFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
-    'tests/index.ts'?: FileObjects['Text']
   }
 >
 
@@ -37,15 +34,9 @@ type OutFiles = Extends<
   Record<string, FileObj>,
   {
     'package.json': FileObjects['PackageJson']
-    'tests/index.ts'?: FileObjects['Text']
+    '.cspell.json': FileObjects['Json']
   }
 >
-
-// -----------------------------------------------------------------------------
-// constant
-// -----------------------------------------------------------------------------
-
-const assetsDir = path.join(assetsDirRoot, 'fast-check')
 
 // -----------------------------------------------------------------------------
 // utils
@@ -53,9 +44,32 @@ const assetsDir = path.join(assetsDirRoot, 'fast-check')
 
 const mkPackageJson = {
   devDependencies: {
-    'fast-check': '^2.13.0',
+    cspell: '^5.5.2',
+  },
+  scripts: {
+    spell: "yarn cspell '**/*.*'",
   },
 }
+
+const mkCspellJson = (config: Config): Json => ({
+  version: '0.1',
+  language: 'en',
+  ignorePaths: [
+    '**/node_modules/**',
+    '**/.cache/**',
+    '**/dist/**',
+    '**/.git/**',
+    '**/.cache/**',
+    '**/*.tsbuildinfo',
+    'tmp/',
+    ...(config.packageManager === 'yarn'
+      ? ['yarn.lock', '**/yarn-error.log']
+      : ['package-lock.json']),
+    ...(config.docsTs ? ['**/docs/examples/', '**/docs/modules/*.ts.md'] : []),
+    ...(config.vscode ? ['.vscode'] : []),
+  ],
+  words: [],
+})
 
 // -----------------------------------------------------------------------------
 // effect
@@ -75,23 +89,14 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     )
 )
 
-const indexTs: Effect<
-  undefined | FileObjects['Text']
-> = RTE.scope(({ cap, config }) =>
-  config.jest
-    ? pipe(
-        path.join(assetsDir, 'tests/index.ts'),
-        cap.readFile,
-        RTE.map(splitLines),
-        RTE.map(tag('Text'))
-      )
-    : RTE.of(undefined)
+const cspellJson: Effect<FileObjects['Json']> = RTE.scope(({ config }) =>
+  pipe(mkCspellJson(config), tag('Json'), RTE.of)
 )
 
 const main: Effect<OutFiles> = pipe(
   {
     'package.json': packageJson,
-    'tests/index.ts': indexTs,
+    '.cspell.json': cspellJson,
   },
   sequenceS(RTE.ApplySeq)
 )
