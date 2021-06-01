@@ -31,10 +31,10 @@ const getConfig: (_1: Capabilities) => Effect<Config> = (cap) =>
     )
   )
 
-const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
-  cap,
-  config
-) =>
+const generateFiles: (_1: {
+  config: Config
+  cap: Capabilities
+}) => Effect<FileSystem> = ({ cap, config }) =>
   pipe(
     TE.of({}),
     TE.chain((files) =>
@@ -89,7 +89,7 @@ const main: Effect<void> = pipe(
   TE.Do,
   TE.bind('cap', () => TE.of(capabilities)),
   TE.bind('config', ({ cap }) => getConfig(cap)),
-  TE.bind('files', ({ config, cap }) => generateFiles(cap, config)),
+  TE.bind('files', ({ config, cap }) => generateFiles({ cap, config })),
   TE.chain(({ cap, config, files }) => FS.writeOut({ files, cap, config }))
 )
 

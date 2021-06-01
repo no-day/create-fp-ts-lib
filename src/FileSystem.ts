@@ -19,7 +19,9 @@ type Env = {
   files: FileSystem
 }
 
-type Effect<A> = (env: Env) => TE.TaskEither<string, A>
+type Error = string
+
+type Effect<A> = (env: Env) => TE.TaskEither<Error, A>
 
 // -----------------------------------------------------------------------------
 // effect
