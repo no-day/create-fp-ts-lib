@@ -6,6 +6,7 @@ import docsTs from './docs-ts'
 import fastCheck from './fast-check'
 import ghActions from './gh-actions'
 import vscode from './vscode'
+import markdownMagic from './markdown-magic'
 
 export {
   skeleton,
@@ -16,4 +17,5 @@ export {
   fastCheck,
   ghActions,
   vscode,
+  markdownMagic,
 }

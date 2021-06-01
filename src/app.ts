@@ -74,6 +74,14 @@ const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
       config.vscode
         ? pipe(features.vscode({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
+    ),
+    TE.chain((files) =>
+      config.markdownMagic
+        ? pipe(
+            features.markdownMagic({ cap, config, files }),
+            TE.map(merge(files))
+          )
+        : TE.of(files)
     )
   )
 
