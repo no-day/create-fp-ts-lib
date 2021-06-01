@@ -5,5 +5,15 @@ import jest from './jest'
 import docsTs from './docs-ts'
 import fastCheck from './fast-check'
 import ghActions from './gh-actions'
+import vscode from './vscode'
 
-export { skeleton, prettier, esLint, jest, docsTs, fastCheck, ghActions }
+export {
+  skeleton,
+  prettier,
+  esLint,
+  jest,
+  docsTs,
+  fastCheck,
+  ghActions,
+  vscode,
+}

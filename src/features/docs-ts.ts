@@ -42,7 +42,7 @@ type OutFiles = Extends<
 // -----------------------------------------------------------------------------
 
 const devDependencies: Effect<PackageJson['dependencies']> = RTE.of({
-  'docs-ts': '^0.6.5',
+  'docs-ts': '^0.6.10',
 })
 
 const scripts: Effect<PackageJson['scripts']> = RTE.scope(

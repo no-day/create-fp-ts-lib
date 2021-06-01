@@ -15,3 +15,4 @@ yarn install
 yarn run build
 yarn run lint
 yarn run test
+yarn run docs-ts

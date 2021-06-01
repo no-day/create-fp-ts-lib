@@ -12,7 +12,7 @@ import { pipe } from 'fp-ts/function'
  * @since {{projectVersion}}
  * @category Greetings
  * @example
- *   import { greet } from '{{NAME}}'
+ *   import { greet } from '{{name}}'
  *   assert.deepStrictEqual(greet('World'), 'Hello, World!')
  */
 export const greet = (name: string): string =>

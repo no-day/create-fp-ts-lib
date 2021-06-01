@@ -69,6 +69,11 @@ const generateFiles: (_1: Capabilities, _2: Config) => Effect<FileSystem> = (
       config.ghActions
         ? pipe(features.ghActions({ cap, config, files }), TE.map(merge(files)))
         : TE.of(files)
+    ),
+    TE.chain((files) =>
+      config.vscode
+        ? pipe(features.vscode({ cap, config, files }), TE.map(merge(files)))
+        : TE.of(files)
     )
   )
 

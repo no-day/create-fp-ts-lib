@@ -1,6 +1,6 @@
 # {{name}}
 
-[API Docs]({{homepageAPI}})
+[API Docs]({{{homepageAPI}}})
 
 ---
 
@@ -28,7 +28,7 @@ npm install fp-ts {{name}}
 ## Example
 
 ```ts
-import * as Foo from '{{name}}'
+import * as Lib from '{{name}}'
 
-const example = Foo.bar
+// write an example...
 ```
