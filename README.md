@@ -5,20 +5,20 @@
 # Table of Contents
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
-
 - [Getting started](#getting-started)
 - [Features](#features)
-  - [Code Quality](#code-quality)
-  - [Testing](#testing)
-  - [Documentation](#documentation)
-  - [Building](#building)
-  - [Continuos Integration](#continuos-integration)
-  - [Dev tasks](#dev-tasks)
+  * [Code Quality](#code-quality)
+  * [Testing](#testing)
+  * [Documentation](#documentation)
+  * [Building](#building)
+  * [Continuos Integration](#continuos-integration)
+  * [Dev tasks](#dev-tasks)
 - [Recipes](#recipes)
-  - [Commands](#commands)
-  - [Serve docs on GitHub pages](#serve-docs-on-github-pages)
-  - [Publish to NPM](#publish-to-npm)
-  <!-- AUTO-GENERATED-CONTENT:END -->
+  * [Commands](#commands)
+  * [Serve docs on GitHub pages](#serve-docs-on-github-pages)
+  * [Publish to NPM](#publish-to-npm)
+- [CLI Options](#cli-options)
+<!-- AUTO-GENERATED-CONTENT:END -->
 
 ## Getting started
 
