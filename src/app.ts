@@ -1,4 +1,4 @@
-import { pipe } from 'fp-ts/function'
+import { constVoid, pipe } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 import * as features from './features'
 import { FileSystem } from './FileSystem'
@@ -21,7 +21,7 @@ type Effect<A> = TE.TaskEither<Error, A>
 // effect
 // -----------------------------------------------------------------------------
 
-const getConfig: (_1: Capabilities) => Effect<Config> = (cap) =>
+const getConfig: (cap: Capabilities) => Effect<Config> = (cap) =>
   pipe(
     TE.fromTask<string, Config>(getCliOpts),
     TE.chain((config) =>
@@ -31,7 +31,7 @@ const getConfig: (_1: Capabilities) => Effect<Config> = (cap) =>
     )
   )
 
-const generateFiles: (_1: {
+const generateFiles: (env: {
   config: Config
   cap: Capabilities
 }) => Effect<FileSystem> = ({ cap, config }) =>
@@ -90,10 +90,28 @@ const generateFiles: (_1: {
     )
   )
 
+const checkGitDir: (env: {
+  config: Config
+  cap: Capabilities
+}) => Effect<void> = ({ config, cap }) =>
+  config.inPlace
+    ? pipe(
+        cap.runGit(['status', '--porcelain'])({}),
+        TE.chain(({ stdout, exitCode, stderr }) =>
+          stderr === '' && stdout === '' && exitCode === 0
+            ? TE.of(constVoid())
+            : TE.throwError(
+                'Not inside a Git directory with clean working tree'
+              )
+        )
+      )
+    : TE.of(constVoid())
+
 const main: Effect<void> = pipe(
   TE.Do,
   TE.bind('cap', () => TE.of(capabilities)),
   TE.bind('config', ({ cap }) => getConfig(cap)),
+  TE.chainFirst(checkGitDir),
   TE.bind('files', ({ config, cap }) => generateFiles({ cap, config })),
   TE.chain(({ cap, config, files }) => FS.writeOut({ files, cap, config }))
 )

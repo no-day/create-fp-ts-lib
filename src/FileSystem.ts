@@ -27,7 +27,7 @@ type Effect<A> = (env: Env) => TE.TaskEither<Error, A>
 // effect
 // -----------------------------------------------------------------------------
 
-const writeFile: (_1: string, _2: FileObj) => Effect<void> = (
+const writeFile: (filePath: string, content: FileObj) => Effect<void> = (
   filePath,
   content
 ) =>

@@ -1,9 +1,8 @@
-import * as TE from 'fp-ts/TaskEither'
-import { TaskEither } from 'fp-ts/TaskEither'
-import * as fs from 'fs'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { pipe } from 'fp-ts/lib/function'
+import * as taskified from './taskified'
+import { SimpleSpawnResult } from './simple-spawn'
 
 // -----------------------------------------------------------------------------
 // types
@@ -17,25 +16,8 @@ type Capabilities = {
   mkDir: (path: string, opts: { recursive: boolean }) => Effect<void>
   writeFile: (path: string, content: string) => Effect<void>
   readFile: (path: string) => Effect<string>
+  runGit: (args: string[]) => Effect<SimpleSpawnResult>
 }
-
-// -----------------------------------------------------------------------------
-// impl
-// -----------------------------------------------------------------------------
-
-const implWriteFile: (
-  filename: string,
-  data: string
-) => TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.writeFile)
-
-const implReadFile: (
-  filename: string
-) => TaskEither<NodeJS.ErrnoException, Buffer> = TE.taskify(fs.readFile)
-
-const implMkdir: (
-  filename: string,
-  opts: { recursive: boolean }
-) => TaskEither<NodeJS.ErrnoException, void> = TE.taskify(fs.mkdir)
 
 // -----------------------------------------------------------------------------
 // capabilities
@@ -43,30 +25,38 @@ const implMkdir: (
 
 const mkDir: Capabilities['mkDir'] = (name, opts) =>
   pipe(
-    implMkdir(name, opts),
+    taskified.mkdir(name, opts),
     RTE.fromTaskEither,
     RTE.mapLeft(() => `Cannot create dictionary ${name}`)
   )
 
 const writeFile: Capabilities['writeFile'] = (name, opts) =>
   pipe(
-    implWriteFile(name, opts),
+    taskified.writeFile(name, opts),
     RTE.fromTaskEither,
     RTE.mapLeft(() => `Cannot write to file ${name}`)
   )
 
 const readFile: Capabilities['readFile'] = (name) =>
   pipe(
-    implReadFile(name),
+    taskified.readFile(name),
     RTE.fromTaskEither,
     RTE.mapLeft(() => `Cannot read file ${name}`),
     RTE.map((_) => _.toString())
+  )
+
+const runGit: Capabilities['runGit'] = (args) =>
+  pipe(
+    taskified.simpleSpawn('git', args),
+    RTE.fromTaskEither,
+    RTE.mapLeft(() => `Cannot read file ${name}`)
   )
 
 const capabilities: Capabilities = {
   mkDir,
   writeFile,
   readFile,
+  runGit,
 }
 
 // -----------------------------------------------------------------------------

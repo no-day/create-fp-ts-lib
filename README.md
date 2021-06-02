@@ -17,6 +17,7 @@
   * [Commands](#commands)
   * [Serve docs on GitHub pages](#serve-docs-on-github-pages)
   * [Publish to NPM](#publish-to-npm)
+  * [Update existing repository](#update-existing-repository)
 - [CLI Options](#cli-options)
 <!-- AUTO-GENERATED-CONTENT:END -->
 
@@ -106,6 +107,11 @@ On every release:
 5. Use `v1.0.1` as "Tag version" and "Release title"
 6. Click "Publish release"
 7. Check the "Actions" tab to see if CI runs properly
+
+### Update existing repository
+
+Currently the tool is optimized for creating new projects from scratch. However, we provide an `--inPlace` option, which is not very smart yet. It will just generate files as usual and possibly override existing files. You'll need to sort out changes manually.
+The CLI will make sure your git working directory is clean.
 
 ## CLI Options
 
