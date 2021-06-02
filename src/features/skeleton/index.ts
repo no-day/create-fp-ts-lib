@@ -11,6 +11,7 @@ import { assetsDirRoot } from '../../assets-dir'
 import { splitLines } from '../../split-lines'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import mkPackageJson from './package-json'
+import { merge } from '@no-day/ts-prefix'
 
 // -----------------------------------------------------------------------------
 // types
@@ -42,10 +43,13 @@ type Error = string
 type Effect<A> = ReaderTaskEither<Env, Error, A>
 
 // -----------------------------------------------------------------------------
-// constant
+// util
 // -----------------------------------------------------------------------------
 
 const assetsDir = path.join(assetsDirRoot, 'skeleton')
+
+const badge = ({ homepage }: Config) =>
+  `[![Test](${homepage}/actions/workflows/build.yml/badge.svg)](${homepage}/actions/workflows/build.yml)`
 
 // -----------------------------------------------------------------------------
 // effect
@@ -104,7 +108,9 @@ const readme: Effect<FileObjects['Text']> = RTE.scope(({ cap, config }) =>
   pipe(
     path.join(assetsDir, 'README.md'),
     cap.readFile,
-    RTE.map((x) => Mustache.render(x, config)),
+    RTE.map((x) =>
+      Mustache.render(x, pipe({ badge: badge(config) }, merge(config)))
+    ),
     RTE.map(splitLines),
     RTE.map(tag('Text'))
   )

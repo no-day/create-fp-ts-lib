@@ -1,5 +1,7 @@
 # {{name}}
 
+{{badge}}
+
 [API Docs]({{{homepageAPI}}})
 
 ---

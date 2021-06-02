@@ -12,9 +12,9 @@ $DIR/bin/index.js --noQuest
 cd fp-ts-lib
 
 yarn install
+yarn run spell
 yarn run build
 yarn run lint
 yarn run test
 yarn run docs-ts
 yarn run md
-yarn run spell
