@@ -2,6 +2,7 @@
   "ignores": [
     "cspell",
     "@types/jest",
-    "prettier-plugin-jsdoc"
+    "prettier-plugin-jsdoc",
+    "pre-commit"
   ]
 }

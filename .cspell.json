@@ -25,6 +25,9 @@
     "eslintignore",
     "taskify",
     "inotifywait",
-    "mktemp"
+    "mktemp",
+    "taskified",
+    "deps",
+    "precommit"
   ]
 }
