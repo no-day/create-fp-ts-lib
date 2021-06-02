@@ -81,6 +81,7 @@ and then follow the questions asked by the CLI.
 | `yarn docs`  | Generate Documentation               |
 | `yarn lint`  | Run linter                           |
 | `yarn md`    | Enhance README with auto generations |
+| `yarn spell` | Run the code spell checker           |
 
 You can use `npm` as well. Check the generated `package.json` for available watch tasks.
 
@@ -105,3 +106,9 @@ On every release:
 5. Use `v1.0.1` as "Tag version" and "Release title"
 6. Click "Publish release"
 7. Check the "Actions" tab to see if CI runs properly
+
+## CLI Options
+
+Run `yarn create fp-ts-lib --help` or `npm init fp-ts-lib --help` to see all options.
+
+Note: Unless you provide the `--noQuest` flag, every CLI option will still appear in the user questionnaire. However equipped with the provided CLI options as default answers.

@@ -21,8 +21,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn install
-      - run: yarn build
-      - run: yarn test
-      - run: yarn lint
-      - run: yarn spell
-      - run: yarn e2e-test
+      - run: yarn run spell
+      - run: yarn run deps
+      - run: yarn run build
+      - run: yarn run test
+      - run: yarn run lint
+      - run: yarn run e2e-test

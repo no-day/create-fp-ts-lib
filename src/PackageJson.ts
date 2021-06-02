@@ -1,4 +1,6 @@
-export type PackageJson = {
+import { Json } from './Json'
+
+export type PackageJson<Extra = Record<string, Json>> = Extra & {
   name: string
   homepage: string
   version: string
@@ -10,9 +12,9 @@ export type PackageJson = {
   scripts: Record<string, string>
 }
 
-export const merge = (p1: PackageJson) => (
-  p2: Partial<PackageJson>
-): PackageJson => ({
+export const merge = <Extra>(p1: PackageJson<Extra>) => (
+  p2: Partial<PackageJson<Extra>>
+): PackageJson<Extra> => ({
   ...p1,
   ...p2,
   peerDependencies: { ...p1.peerDependencies, ...p2.peerDependencies },

@@ -1,0 +1,7 @@
+{
+  "ignores": [
+    "cspell",
+    "@types/jest",
+    "prettier-plugin-jsdoc"
+  ]
+}

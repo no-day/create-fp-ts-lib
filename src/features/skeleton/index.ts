@@ -48,8 +48,10 @@ type Effect<A> = ReaderTaskEither<Env, Error, A>
 
 const assetsDir = path.join(assetsDirRoot, 'skeleton')
 
-const badge = ({ homepage }: Config) =>
-  `[![Test](${homepage}/actions/workflows/build.yml/badge.svg)](${homepage}/actions/workflows/build.yml)`
+const badge = ({ ghActions, homepage }: Config) =>
+  ghActions
+    ? `[![Test](${homepage}/actions/workflows/build.yml/badge.svg)](${homepage}/actions/workflows/build.yml)`
+    : ''
 
 // -----------------------------------------------------------------------------
 // effect
