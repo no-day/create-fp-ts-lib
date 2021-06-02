@@ -17,51 +17,18 @@
       }
     },
     {
-      "label": "docs:watch",
+      "label": "test:watch",
       "runOptions": { "runOn": "folderOpen" },
       "type": "shell",
       "command": "yarn",
       "isBackground": true,
-      "args": ["docs:watch"],
-      "group": "none",
+      "args": ["test:watch"],
+      "group": "test",
       "presentation": {
         "reveal": "always",
         "echo": false,
         "focus": false,
         "panel": "dedicated"
-      }
-    },
-    {
-      "label": "md:watch",
-      "runOptions": { "runOn": "folderOpen" },
-      "type": "shell",
-      "command": "yarn",
-      "isBackground": true,
-      "args": ["md:watch"],
-      "group": "none",
-      "presentation": {
-        "reveal": "always",
-        "echo": false,
-        "focus": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "docs-preview:watch",
-      "runOptions": { "runOn": "folderOpen" },
-      "type": "shell",
-      "command": "yarn",
-      "isBackground": true,
-      "args": ["docs-preview:watch"],
-      "group": "none",
-      "presentation": {
-        "reveal": "always",
-        "echo": false,
-        "focus": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "shell": { "args": ["-i"] }
       }
     }
   ]
