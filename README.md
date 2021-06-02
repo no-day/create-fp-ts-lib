@@ -53,6 +53,7 @@ and then follow the questions asked by the CLI.
 - API generation by [docs-ts](https://github.com/gcanti/docs-ts)
 - JSDoc formatting using [prettier-plugin-jsdoc](https://github.com/hosseinmd/prettier-plugin-jsdoc)
 - README post-processing with [markdown-magic](https://github.com/DavidWells/markdown-magic) (e.g. table of content generation)
+- Code spell checking by [cspell](https://github.com/streetsidesoftware/cspell)
 
 ### Building
 

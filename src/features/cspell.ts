@@ -2,12 +2,12 @@ import * as RTE from '../ReaderTaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
 import { FileObj, FileObjects } from '../FileObj'
-import { merge } from '@no-day/ts-prefix'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { Json } from '../Json'
+import * as PJ from '../PackageJson'
 
 // -----------------------------------------------------------------------------
 // types
@@ -80,13 +80,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     files: {
       'package.json': { data },
     },
-  }) =>
-    pipe(
-      mkPackageJson,
-      RTE.of,
-      RTE.map(merge(data)),
-      RTE.map(tag('PackageJson'))
-    )
+  }) => pipe(mkPackageJson, PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const cspellJson: Effect<FileObjects['Json']> = RTE.scope(({ config }) =>

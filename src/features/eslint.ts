@@ -2,7 +2,7 @@ import * as RTE from '../ReaderTaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
 import { FileObj, FileObjects } from '../FileObj'
-import { merge } from '@no-day/ts-prefix'
+import * as PJ from '../PackageJson'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
@@ -53,7 +53,7 @@ const eslintConfig: Linter.Config = {
   rules: {},
 }
 
-const mkPackageJson = (config: Config): Json => ({
+const mkPackageJson = (config: Config) => ({
   devDependencies: {
     eslint: '^7.27.0',
     '@typescript-eslint/eslint-plugin': '^4.25.0',
@@ -74,13 +74,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
       'package.json': { data },
     },
     config,
-  }) =>
-    pipe(
-      mkPackageJson(config),
-      RTE.of,
-      RTE.map(merge(data)),
-      RTE.map(tag('PackageJson'))
-    )
+  }) => pipe(mkPackageJson(config), PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const eslintIgnore: Effect<FileObjects['Text']> = pipe(

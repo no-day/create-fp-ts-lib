@@ -2,12 +2,11 @@ import * as RTE from '../ReaderTaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { Extends, tag } from '../type-utils'
 import { FileObj, FileObjects } from '../FileObj'
-import { merge } from '@no-day/ts-prefix'
+import * as PJ from '../PackageJson'
 import { Capabilities } from '../Capabilities'
 import { Config } from '../Config/type'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
-import { Json } from '../Json'
 
 // -----------------------------------------------------------------------------
 // types
@@ -41,7 +40,7 @@ type OutFiles = Extends<
 // utils
 // -----------------------------------------------------------------------------
 
-const mkPackageJson = (config: Config): Json => ({
+const mkPackageJson = (config: Config) => ({
   devDependencies: {
     'markdown-magic': '^2.0.0',
   },
@@ -60,13 +59,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
       'package.json': { data },
     },
     config,
-  }) =>
-    pipe(
-      mkPackageJson(config),
-      RTE.of,
-      RTE.map(merge(data)),
-      RTE.map(tag('PackageJson'))
-    )
+  }) => pipe(mkPackageJson(config), PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const main: Effect<OutFiles> = pipe(
