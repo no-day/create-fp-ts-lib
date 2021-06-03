@@ -1,25 +1,38 @@
 # create-fp-ts-lib
 
 [![Test](https://github.com/no-day/create-fp-ts-lib/actions/workflows/build.yml/badge.svg)](https://github.com/no-day/create-fp-ts-lib/actions/workflows/build.yml)
+![David](https://img.shields.io/david/no-day/create-fp-ts-lib)
+![npm](https://img.shields.io/npm/v/create-fp-ts-lib)
+
+Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) coding, documentation and testing patterns.
 
 # Table of Contents
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
+
 - [Getting started](#getting-started)
 - [Features](#features)
-  * [Code Quality](#code-quality)
-  * [Testing](#testing)
-  * [Documentation](#documentation)
-  * [Building](#building)
-  * [Continuos Integration](#continuos-integration)
-  * [Dev tasks](#dev-tasks)
+  - [Code Quality](#code-quality)
+  - [Testing](#testing)
+  - [Documentation](#documentation)
+  - [Building](#building)
+  - [Continuos Integration](#continuos-integration)
+  - [Dev tasks](#dev-tasks)
 - [Recipes](#recipes)
-  * [Commands](#commands)
-  * [Serve docs on GitHub pages](#serve-docs-on-github-pages)
-  * [Publish to NPM](#publish-to-npm)
-  * [Update existing repository](#update-existing-repository)
+  - [Commands](#commands)
+  - [Serve docs on GitHub pages](#serve-docs-on-github-pages)
+  - [Publish to NPM](#publish-to-npm)
+  - [Update existing repository](#update-existing-repository)
 - [CLI Options](#cli-options)
 <!-- AUTO-GENERATED-CONTENT:END -->
+
+## Introduction
+
+[fp-ts](https://github.com/gcanti/fp-ts) bring typed functional programming to [TypeScript](https://www.typescriptlang.org/). The advantage over functional languages that compile to JavaScript is that it's much closer to an already existing and typed ecosystem.
+
+This provides a nice out of the box compatibility. However, fp-ts is most powerful and composable if special purpose libraries follow some conventions. The [fp-ts ecosystem](https://gcanti.github.io/fp-ts/ecosystem/) is still relatively small. `create-fp-ts-lib` helps you to bootstrap libraries that follow common fp-ts coding, documentation and testing patterns.
+
+This is the main goal of this project. However it may be useful to create any other TypeScript library as well.
 
 ## Getting started
 
