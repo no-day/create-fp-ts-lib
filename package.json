@@ -1,7 +1,7 @@
 {
   "name": "create-fp-ts-lib",
   "homepage": "https://github.com/no-day/create-fp-ts-lib",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "dist/index.js",
   "license": "MIT",
   "peerDependencies": {
