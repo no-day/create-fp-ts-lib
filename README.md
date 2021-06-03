@@ -145,7 +145,7 @@ The CLI will make sure your git working directory is clean.
 
 ## CLI Options
 
-Run `yarn create fp-ts-lib --help` or `npm init fp-ts-lib --help` to see all options.
+Run `create-fp-ts-lib --help` to see all options.
 
 Note: Unless you provide the `--noQuest` flag, every CLI option will still appear in the user questionnaire. However equipped with the provided CLI options as default answers.
 
