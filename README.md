@@ -108,19 +108,19 @@ You can use `npm` as well. Check the generated `package.json` for available watc
 
 ### Publish to NPM
 
-Only once:
+- Only once:
 
-- In the GitHub UI add `NPM_TOKEN` from you NPM account as a secret ("Settings" / "Secrets")
+  - In the GitHub UI add `NPM_TOKEN` from you NPM account as a secret ("Settings" / "Secrets")
 
-On every release:
+- On every release:
 
-1. Increase the version in the `package.json` e.g. to "1.0.1"
-2. Commit as `v1.0.1`
-3. In the GitHub UI, go to the "releases" section of your repo.
-4. Select "Create a new release"
-5. Use `v1.0.1` as "Tag version" and "Release title"
-6. Click "Publish release"
-7. Check the "Actions" tab to see if CI runs properly
+  - Increase the version in the `package.json` e.g. to "1.0.1"
+  - Commit as `v1.0.1`
+  - In the GitHub UI, go to the "releases" section of your repo.
+  - Select "Create a new release"
+  - Use `v1.0.1` as "Tag version" and "Release title"
+  - Click "Publish release"
+  - Check the "Actions" tab to see if CI runs properly
 
 ### Update existing repository
 
@@ -142,4 +142,4 @@ The following features are planned
 - Run CI locally in isolated environment
 - Readme badges (npm version, build status, dependencies)
 - Watch task for linting using [eslint-watch](https://github.com/rizowski/eslint-watch)
--
+- Maybe you have an idea... File an [issue](https://github.com/no-day/create-fp-ts-lib/issues/new)
