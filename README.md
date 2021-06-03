@@ -6,6 +6,8 @@
 
 Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) coding, documentation and testing patterns.
 
+<img src="assets/create-fp-ts-lib.gif"/>
+
 # Table of Contents
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
