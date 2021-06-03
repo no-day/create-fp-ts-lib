@@ -51,7 +51,7 @@ _or_
 npm init fp-ts-lib
 ```
 
-and then follow the questions asked by the CLI. The first run may be slow
+and then follow the questions asked by the CLI. The first run may be slow. that's because your package manager will always fetch the latest version. Once run, the CLI `create-fp-ts-lib` is installed globally on your system. See [this document](https://classic.yarnpkg.com/en/docs/cli/create/) for more information.
 
 ## Features
 
