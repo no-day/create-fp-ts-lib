@@ -33,7 +33,7 @@ Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) 
 
 This provides a nice out of the box compatibility. However, fp-ts is most powerful and composable if special purpose libraries follow some conventions. The [fp-ts ecosystem](https://gcanti.github.io/fp-ts/ecosystem/) is still relatively small. `create-fp-ts-lib` helps you to bootstrap libraries that follow common fp-ts coding, documentation and testing patterns.
 
-This is the main goal of this project. However it may be useful to create any other TypeScript library as well.
+This is the main goal of this project. However it may be useful to create any other TypeScript library as well. Currently nothing inherently fp-ts specific is generated, except from a peer dependency. But this may change in the future.
 
 ## Getting started
 
@@ -49,7 +49,7 @@ _or_
 npm init fp-ts-lib
 ```
 
-and then follow the questions asked by the CLI.
+and then follow the questions asked by the CLI. The first run may be slow
 
 ## Features
 

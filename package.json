@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "license": "MIT",
   "peerDependencies": {
-    "fp-ts": "^2.9.5"
+    "fp-ts": "^2.10.5"
   },
   "bin": {
     "create-fp-ts-lib": "bin/index.js"
