@@ -29,7 +29,7 @@ Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) 
 
 ## Introduction
 
-[fp-ts](https://github.com/gcanti/fp-ts) bring typed functional programming to [TypeScript](https://www.typescriptlang.org/). The advantage over functional languages that compile to JavaScript is that it's much closer to an already existing and typed ecosystem.
+[fp-ts](https://github.com/gcanti/fp-ts) brings typed functional programming to [TypeScript](https://www.typescriptlang.org/). The advantage over functional languages that compile to JavaScript is that it's much closer to an already existing and typed ecosystem.
 
 This provides a nice out of the box compatibility. However, fp-ts is most powerful and composable if special purpose libraries follow some conventions. The [fp-ts ecosystem](https://gcanti.github.io/fp-ts/ecosystem/) is still relatively small. `create-fp-ts-lib` helps you to bootstrap libraries that follow common fp-ts coding, documentation and testing patterns.
 
