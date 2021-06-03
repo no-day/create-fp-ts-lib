@@ -24,6 +24,7 @@ Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) 
   * [Publish to NPM](#publish-to-npm)
   * [Update existing repository](#update-existing-repository)
 - [CLI Options](#cli-options)
+- [Future features](#future-features)
 <!-- AUTO-GENERATED-CONTENT:END -->
 
 ## Introduction
@@ -131,3 +132,14 @@ The CLI will make sure your git working directory is clean.
 Run `yarn create fp-ts-lib --help` or `npm init fp-ts-lib --help` to see all options.
 
 Note: Unless you provide the `--noQuest` flag, every CLI option will still appear in the user questionnaire. However equipped with the provided CLI options as default answers.
+
+## Future features
+
+The following features are planned
+
+- Check dependencies with [depcheck](https://github.com/depcheck/depcheck)
+- Precommit hooks
+- Run CI locally in isolated environment
+- Readme badges (npm version, build status, dependencies)
+- Watch task for linting using [eslint-watch](https://github.com/rizowski/eslint-watch)
+-
