@@ -13,6 +13,8 @@ Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
 - [Introduction](#introduction)
 - [Getting started](#getting-started)
+  * [Yarn](#yarn)
+  * [NPM](#npm)
 - [Features](#features)
   * [Code Quality](#code-quality)
   * [Testing](#testing)
@@ -39,19 +41,31 @@ This is the main goal of this project. However it may be useful to create any ot
 
 ## Getting started
 
-No installation needed, just run:
+### Yarn
+
+```bash
+yarn global add create-fp-ts-lib
+create-fp-ts-lib
+```
+
+You can also use this shortcut to always invoke an up to date version:
 
 ```bash
 yarn create fp-ts-lib
 ```
 
-_or_
+### NPM
+
+```bash
+npm install -g create-fp-ts-lib
+create-fp-ts-lib
+```
+
+You can also use this shortcut to always invoke an up to date version:
 
 ```bash
 npm init fp-ts-lib
 ```
-
-and then follow the questions asked by the CLI. The first run may be slow. that's because your package manager will always fetch the latest version. Once run, the CLI `create-fp-ts-lib` is installed globally on your system. See [this document](https://classic.yarnpkg.com/en/docs/cli/create/) for more information.
 
 ## Features
 
