@@ -12,4 +12,5 @@ if (gitStatusBefore !== gitStatusAfter) {
   process.exit(1)
 }
 
+cp.execSync('yarn build')
 cp.execSync('yarn ci')

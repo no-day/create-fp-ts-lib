@@ -8,6 +8,8 @@ import { merge } from '@no-day/ts-prefix'
 import getQuest from './UserQuest'
 import { getCliOpts } from './Config/cli'
 import { Config } from './Config/type'
+import { getProjectDirectory } from './Config'
+import * as CFG from './Config'
 
 // -----------------------------------------------------------------------------
 // type
@@ -17,11 +19,15 @@ type Error = string
 
 type Effect<A> = TE.TaskEither<Error, A>
 
+type _config = { config: Config }
+
+type _cap = { cap: Capabilities }
+
 // -----------------------------------------------------------------------------
 // effect
 // -----------------------------------------------------------------------------
 
-const getConfig: (cap: Capabilities) => Effect<Config> = (cap) =>
+const getConfig: <Env extends _cap>(env: Env) => Effect<Config> = (cap) =>
   pipe(
     TE.fromTask<string, Config>(getCliOpts),
     TE.chain((config) =>
@@ -31,10 +37,9 @@ const getConfig: (cap: Capabilities) => Effect<Config> = (cap) =>
     )
   )
 
-const generateFiles: (env: {
-  config: Config
-  cap: Capabilities
-}) => Effect<FileSystem> = ({ cap, config }) =>
+const generateFiles: <Env extends _config & _cap>(
+  env: Env
+) => Effect<FileSystem> = ({ cap, config }) =>
   pipe(
     TE.of({}),
     TE.chain((files) =>
@@ -90,13 +95,13 @@ const generateFiles: (env: {
     )
   )
 
-const checkGitDir: (env: {
-  config: Config
-  cap: Capabilities
-}) => Effect<void> = ({ config, cap }) =>
+const checkGitDir: <Env extends _config & _cap>(env: Env) => Effect<void> = ({
+  config,
+  cap,
+}) =>
   config.inPlace
     ? pipe(
-        cap.runGit(['status', '--porcelain'])({}),
+        cap.spawn('git', ['status', '--porcelain'], {})({}),
         TE.chain(({ stdout, exitCode, stderr }) =>
           stderr === '' && stdout === '' && exitCode === 0
             ? TE.of(constVoid())
@@ -107,13 +112,28 @@ const checkGitDir: (env: {
       )
     : TE.of(constVoid())
 
+const setup: <Env extends _config & _cap>(env: Env) => Effect<void> = ({
+  config,
+  cap,
+}) =>
+  config.runInstall
+    ? pipe(
+        cap.spawn(config.packageManager, ['install'], {
+          cwd: CFG.getProjectDirectory(config),
+        })({}),
+        TE.map(() => constVoid())
+      )
+    : TE.of(constVoid())
+
 const main: Effect<void> = pipe(
   TE.Do,
   TE.bind('cap', () => TE.of(capabilities)),
-  TE.bind('config', ({ cap }) => getConfig(cap)),
+  TE.bind('config', getConfig),
   TE.chainFirst(checkGitDir),
-  TE.bind('files', ({ config, cap }) => generateFiles({ cap, config })),
-  TE.chain(({ cap, config, files }) => FS.writeOut({ files, cap, config }))
+  TE.bind('files', generateFiles),
+  TE.chainFirst(FS.writeOut),
+  TE.chainFirst(setup),
+  TE.map(constVoid)
 )
 
 // -----------------------------------------------------------------------------

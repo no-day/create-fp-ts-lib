@@ -2,7 +2,7 @@
 
 rm -rf fp-ts-lib-sample
 
-yarn start \
+bin/index.js \
     --name fp-ts-lib-sample \
     --homepage https://github.com/no-day/fp-ts-lib-sample \
     --homepageAPI https://no-day.github.io/fp-ts-lib-sample \

@@ -2,6 +2,7 @@ import * as TE from 'fp-ts/TaskEither'
 import { TaskEither } from 'fp-ts/TaskEither'
 import * as fs from 'fs'
 import { simpleSpawn as simpleSpawn_, SimpleSpawnResult } from './simple-spawn'
+import * as SIS from './simple-spawn'
 
 export const writeFile: (
   filename: string,
@@ -19,5 +20,8 @@ export const mkdir: (
 
 export const simpleSpawn: (
   command: string,
-  args: string[]
-) => TaskEither<'', SimpleSpawnResult> = TE.taskify(simpleSpawn_)
+  args: string[],
+  options: SIS.Options
+) => TaskEither<NodeJS.ErrnoException, SimpleSpawnResult> = TE.taskify(
+  simpleSpawn_
+)

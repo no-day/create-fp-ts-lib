@@ -18,4 +18,5 @@ export const descriptions: { [key in keyof Config]: string } = {
   vscode: 'Use vscode tasks',
   markdownMagic: 'Use markdown-magic',
   cspell: 'Use code spell checking',
+  runInstall: "Run package manager's `install` command",
 }

@@ -23,6 +23,7 @@ const packageManagers: ReadonlyArray<PackageManager> = ['npm', 'yarn']
 const groups = {
   meta: 'Project metadata:',
   features: 'Features:',
+  setup: 'Setup:',
 }
 
 // -----------------------------------------------------------------------------
@@ -140,6 +141,12 @@ const getCliOpts: Task<Config> = () =>
         boolean: true,
         group: groups.features,
         description: descriptions.cspell,
+      })
+      .option('runInstall', {
+        default: defaults.runInstall,
+        boolean: true,
+        group: groups.setup,
+        description: descriptions.runInstall,
       }).argv
   )
 

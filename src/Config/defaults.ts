@@ -18,4 +18,5 @@ export const defaults: Config = {
   vscode: true,
   markdownMagic: true,
   cspell: true,
+  runInstall: true,
 }

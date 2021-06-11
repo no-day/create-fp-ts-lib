@@ -6,6 +6,7 @@ import { constVoid, pipe } from 'fp-ts/lib/function'
 import { FileObj, print } from './FileObj'
 import { Config } from './Config/type'
 import { Capabilities } from './Capabilities'
+import * as CFG from './Config'
 
 // -----------------------------------------------------------------------------
 // types
@@ -35,7 +36,7 @@ const writeFile: (filePath: string, content: FileObj) => Effect<void> = (
     pipe(
       RTE.Do,
       RTE.bind('filePath', () =>
-        RTE.of(config.inPlace ? filePath : path.join(config.name, filePath))
+        RTE.of(path.join(CFG.getProjectDirectory(config), filePath))
       ),
       RTE.bind('dirPath', (s) => pipe(path.dirname(s.filePath), RTE.of)),
       RTE.chainFirst((s) => cap.mkDir(s.dirPath, { recursive: true })),
