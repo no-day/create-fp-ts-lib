@@ -47,7 +47,9 @@
     "spell": "yarn cspell '**/*.*'",
     "deps": "yarn depcheck",
     "precommit": "scripts/precommit.ts",
-    "ci": "scripts/ci.sh"
+    "ci": "scripts/ci.sh",
+    "start": "bin/index.js",
+    "sample": "./scripts/sample.sh"
   },
   "precommit": [
     "precommit"

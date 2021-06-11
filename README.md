@@ -1,8 +1,9 @@
 # create-fp-ts-lib
 
 [![Test](https://github.com/no-day/create-fp-ts-lib/actions/workflows/build.yml/badge.svg)](https://github.com/no-day/create-fp-ts-lib/actions/workflows/build.yml)
-![David](https://img.shields.io/david/no-day/create-fp-ts-lib)
-![npm](https://img.shields.io/npm/v/create-fp-ts-lib)
+[![David](https://img.shields.io/david/no-day/create-fp-ts-lib)
+](https://david-dm.org/no-day/create-fp-ts-lib)
+[![npm](https://img.shields.io/npm/v/create-fp-ts-lib)](https://www.npmjs.com/package/create-fp-ts-lib)
 
 Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) coding, documentation and testing patterns.
 

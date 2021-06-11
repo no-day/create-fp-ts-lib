@@ -39,3 +39,24 @@ jobs:
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  push-sample:
+    needs: ['publish']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: yarn install
+      - run: yarn build
+      - uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'fp-ts-lib-sample'
+          destination-github-username: 'no-day'
+          destination-repository-name: 'fp-ts-lib-sample'
+          user-email: me@thought2.de
+          target-branch: main

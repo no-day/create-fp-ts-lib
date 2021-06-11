@@ -5,3 +5,4 @@ docs/_site
 yarn-error.log
 Gemfile.lock
 /temp
+/fp-ts-lib-sample
