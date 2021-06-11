@@ -51,6 +51,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: yarn install
       - run: yarn build
+      - run: yarn sample
       - uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
