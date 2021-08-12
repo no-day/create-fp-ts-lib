@@ -10,6 +10,7 @@ import { getCliOpts } from './Config/cli'
 import { Config } from './Config/type'
 import { getProjectDirectory } from './Config'
 import * as CFG from './Config'
+import { log } from 'fp-ts/Console'
 
 // -----------------------------------------------------------------------------
 // type
@@ -118,9 +119,10 @@ const setup: <Env extends _config & _cap>(env: Env) => Effect<void> = ({
 }) =>
   config.runInstall
     ? pipe(
-        cap.spawn(config.packageManager, ['install'], {
+        TE.fromIO<string,void>(log('installing dependencies, this process may take a while...')),
+        TE.apFirst(cap.spawn(config.packageManager, ['install'], {
           cwd: CFG.getProjectDirectory(config),
-        })({}),
+        })({})),
         TE.map(() => constVoid())
       )
     : TE.of(constVoid())
