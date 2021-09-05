@@ -47,7 +47,7 @@ const mkPackageJson = (config: Config) => ({
     'docs-ts': '^0.6.10',
   },
   scripts: {
-    docs: `${config.packageManager} run docs-ts`,
+    docs: 'docs-ts',
   },
 })
 

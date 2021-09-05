@@ -58,8 +58,8 @@ const mkPackageJson = (config: Config) => ({
     'ts-jest': '^26.5.3',
   },
   scripts: {
-    test: `${config.packageManager} run jest`,
-    'test:watch': `${config.packageManager} run jest --watch`,
+    test: 'jest',
+    'test:watch': 'jest --watch',
   },
 })
 

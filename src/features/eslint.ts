@@ -60,7 +60,7 @@ const mkPackageJson = (config: Config) => ({
     '@typescript-eslint/parser': '^4.25.0',
   },
   scripts: {
-    lint: `${config.packageManager} run eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0`,
+    lint: 'eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0',
   },
 })
 

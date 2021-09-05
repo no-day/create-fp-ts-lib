@@ -47,7 +47,7 @@ const mkPackageJson = {
     cspell: '^5.5.2',
   },
   scripts: {
-    spell: "yarn cspell '**/*.*'",
+    spell: "cspell '**/*.*'",
   },
 }
 

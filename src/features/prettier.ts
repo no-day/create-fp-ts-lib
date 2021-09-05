@@ -50,7 +50,7 @@ const mkPackageJson = (config: Config) => ({
     'prettier-plugin-jsdoc': '^0.3.13',
   },
   scripts: {
-    pretty: `${config.packageManager} run prettier --check .`,
+    pretty: 'prettier --check .',
   },
 })
 

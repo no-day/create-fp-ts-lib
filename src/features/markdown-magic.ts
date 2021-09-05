@@ -45,7 +45,7 @@ const mkPackageJson = (config: Config) => ({
     'markdown-magic': '^2.0.0',
   },
   scripts: {
-    md: `${config.packageManager} run markdown`,
+    md: 'markdown',
   },
 })
 
