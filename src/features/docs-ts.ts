@@ -42,12 +42,12 @@ type OutFiles = Extends<
 // utils
 // -----------------------------------------------------------------------------
 
-const mkPackageJson = (config: Config) => ({
+const mkPackageJson = () => ({
   devDependencies: {
     'docs-ts': '^0.6.10',
   },
   scripts: {
-    docs: `${config.packageManager} run docs-ts`,
+    docs: 'docs-ts',
   },
 })
 
@@ -60,8 +60,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     files: {
       'package.json': { data },
     },
-    config,
-  }) => pipe(mkPackageJson(config), PJ.merge(data), tag('PackageJson'), RTE.of)
+  }) => pipe(mkPackageJson(), PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const gitignore: Effect<FileObjects['Text']> = RTE.scope(

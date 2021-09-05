@@ -53,14 +53,14 @@ const eslintConfig: Linter.Config = {
   rules: {},
 }
 
-const mkPackageJson = (config: Config) => ({
+const mkPackageJson = () => ({
   devDependencies: {
     eslint: '^7.27.0',
     '@typescript-eslint/eslint-plugin': '^4.25.0',
     '@typescript-eslint/parser': '^4.25.0',
   },
   scripts: {
-    lint: `${config.packageManager} run eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0`,
+    lint: 'eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0',
   },
 })
 
@@ -73,8 +73,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     files: {
       'package.json': { data },
     },
-    config,
-  }) => pipe(mkPackageJson(config), PJ.merge(data), tag('PackageJson'), RTE.of)
+  }) => pipe(mkPackageJson(), PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const eslintIgnore: Effect<FileObjects['Text']> = pipe(
