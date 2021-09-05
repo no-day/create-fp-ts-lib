@@ -51,7 +51,7 @@ const assetsDir = path.join(assetsDirRoot, 'jest')
 // utils
 // -----------------------------------------------------------------------------
 
-const mkPackageJson = (config: Config) => ({
+const mkPackageJson = () => ({
   devDependencies: {
     '@types/jest': '^26.0.20',
     jest: '^26.6.3',
@@ -72,8 +72,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     files: {
       'package.json': { data },
     },
-    config,
-  }) => pipe(mkPackageJson(config), PJ.merge(data), tag('PackageJson'), RTE.of)
+  }) => pipe(mkPackageJson(), PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const jestConfigJs: Effect<FileObjects['Text']> = RTE.scope(({ cap }) =>

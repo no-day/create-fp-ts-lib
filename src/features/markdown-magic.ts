@@ -40,7 +40,7 @@ type OutFiles = Extends<
 // utils
 // -----------------------------------------------------------------------------
 
-const mkPackageJson = (config: Config) => ({
+const mkPackageJson = () => ({
   devDependencies: {
     'markdown-magic': '^2.0.0',
   },
@@ -58,8 +58,7 @@ const packageJson: Effect<FileObjects['PackageJson']> = RTE.scope(
     files: {
       'package.json': { data },
     },
-    config,
-  }) => pipe(mkPackageJson(config), PJ.merge(data), tag('PackageJson'), RTE.of)
+  }) => pipe(mkPackageJson(), PJ.merge(data), tag('PackageJson'), RTE.of)
 )
 
 const main: Effect<OutFiles> = pipe(
