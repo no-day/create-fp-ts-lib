@@ -44,32 +44,32 @@ This is the main goal of this project. However it may be useful to create any ot
 
 ### Yarn
 
-```bash
-yarn global add create-fp-ts-lib
-create-fp-ts-lib
+```shell-session
+$ yarn global add create-fp-ts-lib
+$ create-fp-ts-lib
 ```
 
 If you want don't want to go through the questions, you can run `create-fp-ts-lib -q -n my-lib` to just specify a name and use the defaults for any other options.
 
 You can also use this shortcut to always invoke an up to date version:
 
-```bash
-yarn create fp-ts-lib
+```shell-session
+$ yarn create fp-ts-lib
 ```
 
 ### NPM
 
-```bash
-npm install -g create-fp-ts-lib
-create-fp-ts-lib
+```shell-session
+$ npm install -g create-fp-ts-lib
+$ create-fp-ts-lib
 ```
 
 If you want don't want to go through the questions, you can run `create-fp-ts-lib -q -n my-lib` to just specify a name and use the defaults for any other options.
 
 You can also use this shortcut to always invoke an up to date version:
 
-```bash
-npm init fp-ts-lib
+```shell-session
+$ npm init fp-ts-lib
 ```
 
 ## Features
