@@ -21,7 +21,7 @@ Bootstrap libraries that follow common [fp-ts](https://github.com/gcanti/fp-ts) 
   * [Testing](#testing)
   * [Documentation](#documentation)
   * [Building](#building)
-  * [Continuos Integration](#continuos-integration)
+  * [Continuous Integration](#continuous-integration)
   * [Dev tasks](#dev-tasks)
 - [Recipes](#recipes)
   * [Commands](#commands)
@@ -95,7 +95,7 @@ npm init fp-ts-lib
 
 - `tsconfig.json` settings that emits distributable `.d.ts` and `.js` files
 
-### Continuos Integration
+### Continuous Integration
 
 - CI via [GitHub Actions](https://github.com/features/actions)
 - Generate docs and deploy to GitHub pages using [github-pages-deploy-action](https://github.com/JamesIves/github-pages-deploy-action)
